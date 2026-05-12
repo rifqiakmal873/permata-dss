@@ -1,0 +1,2148 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Permata Motor DSS</title>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@600;700;800&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --pr:#ff8800;--prL:#ffb340;--prD:#cc6600;--prBg:#fff5e6;--prBr:#ffd9a8;
+  --tx:#1a2138;--txM:#6b7280;--txD:#9aa3b2;
+  --bd:#e6ebf3;--bg:#f4f6fb;--wh:#ffffff;--sf:#fafbfd;
+  --rd:#e63757;--rdB:#fff0f2;--rdBr:#ffc9d3;
+  --yw:#f59e0b;--ywB:#fffaeb;--ywBr:#fce4a8;
+  --gn:#10b981;--gnB:#ecfdf5;--gnBr:#a7f0c8;
+  --bl:#3b82f6;--blB:#eff6ff;--blBr:#bfd9fe;
+  --pu:#8b5cf6;--puB:#f5f3ff;--puBr:#d8cdfb;
+}
+html,body{height:100%;font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--tx);-webkit-font-smoothing:antialiased}
+h1,h2,h3,h4{font-family:'Plus Jakarta Sans',sans-serif;letter-spacing:-0.02em}
+button{font-family:inherit;cursor:pointer}
+input,select,textarea{font-family:inherit}
+input:focus,select:focus{outline:none;border-color:var(--pr)!important;box-shadow:0 0 0 3px rgba(255,136,0,0.15)!important}
+::-webkit-scrollbar{width:8px;height:8px}
+::-webkit-scrollbar-track{background:#eef1f9}
+::-webkit-scrollbar-thumb{background:#c9d2e3;border-radius:4px}
+
+/* BG LAYERS */
+.app-bg{
+  min-height:100vh;
+  background:radial-gradient(900px 500px at 100% -5%,rgba(255,185,70,0.13),transparent 55%),
+             radial-gradient(700px 400px at -5% 110%,rgba(100,120,255,0.09),transparent 55%),
+             linear-gradient(180deg,#f8faff 0%,#eef1f9 100%);
+  position:relative;
+}
+.app-bg::before{
+  content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
+  background-image:radial-gradient(circle at 25% 35%,rgba(255,255,255,0.5) 1px,transparent 1px),
+                   radial-gradient(circle at 75% 65%,rgba(255,255,255,0.4) 1px,transparent 1px);
+  background-size:56px 56px,84px 84px;
+}
+.app-bg>*{position:relative;z-index:1}
+
+/* NAV LAYERS */
+.topbar{background:rgba(255,255,255,0.93);backdrop-filter:blur(12px);border-bottom:1px solid var(--bd);position:sticky;top:0;z-index:50}
+.topbar-in{max-width:1400px;margin:0 auto;padding:11px 28px;display:flex;align-items:center;justify-content:space-between;gap:12px}
+.brand{display:flex;align-items:center;gap:12px}
+.brand-logo{width:40px;height:40px;border-radius:11px;background:linear-gradient(135deg,var(--pr),var(--prL));display:flex;align-items:center;justify-content:center;font-size:20px;box-shadow:0 4px 12px rgba(255,136,0,0.28)}
+.brand-name{font-size:15px;font-weight:800;color:var(--tx);line-height:1.2}
+.brand-sub{font-size:10px;color:var(--txM);letter-spacing:0.9px;font-weight:600}
+.user-badge{display:flex;align-items:center;gap:9px;padding:7px 14px;border-radius:28px;background:var(--prBg);border:1px solid var(--prBr)}
+.user-name{font-size:12px;font-weight:700;color:var(--prD);line-height:1.1}
+.user-lbl{font-size:10px;color:var(--txM);margin-bottom:1px}
+
+.navtabs{background:#fff;border-bottom:1px solid var(--bd);position:sticky;top:63px;z-index:49}
+.navtabs-in{max-width:1400px;margin:0 auto;padding:0 28px;display:flex;gap:2px;overflow-x:auto}
+.ntab{padding:12px 17px;background:transparent;border:none;border-bottom:3px solid transparent;color:var(--txM);font-weight:600;font-size:13px;cursor:pointer;display:flex;align-items:center;gap:7px;white-space:nowrap;transition:all 0.18s}
+.ntab:hover{color:var(--tx)}
+.ntab.active{color:var(--prD);border-bottom-color:var(--pr);font-weight:700}
+
+.role-notice{border-bottom:1px solid var(--prBr);padding:6px 28px;font-size:11px;font-weight:600;color:var(--prD);background:linear-gradient(90deg,var(--prBg),rgba(255,245,230,0.4))}
+
+.page-header{max-width:1400px;margin:0 auto;padding:26px 28px 12px}
+.page-content{max-width:1400px;margin:0 auto;padding:0 28px 40px}
+.footer-bar{border-top:1px solid var(--bd);padding:16px 28px;background:rgba(255,255,255,0.5);font-size:11px;color:var(--txM);display:flex;justify-content:space-between;flex-wrap:wrap;gap:6px}
+
+/* CARDS */
+.card{background:#fff;border-radius:16px;border:1px solid rgba(225,230,245,0.8);box-shadow:0 1px 2px rgba(70,80,130,0.04),0 8px 24px rgba(70,80,130,0.06)}
+.glass{background:rgba(255,255,255,0.84);border-radius:16px;border:1px solid rgba(255,255,255,0.65);box-shadow:0 4px 24px rgba(70,80,130,0.08),inset 0 1px 0 rgba(255,255,255,0.8);backdrop-filter:blur(14px)}
+.stat-card{border-radius:16px;padding:20px 22px;flex:1;min-width:160px;position:relative;overflow:hidden;background:#fff;border:1px solid rgba(225,230,245,0.8);box-shadow:0 1px 2px rgba(70,80,130,0.04),0 8px 22px rgba(70,80,130,0.06)}
+.stat-strip{position:absolute;top:0;left:0;right:0;height:4px}
+.stat-ghost{position:absolute;top:8px;right:12px;font-size:50px;opacity:0.07;transform:rotate(-10deg);line-height:1;pointer-events:none}
+.stat-ico{display:inline-flex;align-items:center;justify-content:center;width:32px;height:32px;border-radius:9px;font-size:16px;margin-bottom:10px}
+.stat-lbl{font-size:10px;color:var(--txM);font-weight:700;text-transform:uppercase;letter-spacing:0.8px}
+.stat-val{font-size:27px;font-weight:800;color:var(--tx);margin:4px 0 2px;letter-spacing:-0.7px;font-family:'Plus Jakarta Sans',sans-serif;line-height:1}
+.stat-sub{font-size:11px;color:var(--txM)}
+
+/* BUTTONS */
+.btn{display:inline-flex;align-items:center;gap:5px;border-radius:8px;font-weight:700;cursor:pointer;transition:all 0.17s;line-height:1.2;border:none}
+.btn-sm{padding:5px 11px;font-size:11px}
+.btn-md{padding:9px 17px;font-size:13px}
+.btn-lg{padding:11px 20px;font-size:13px}
+.btn-pr{background:linear-gradient(135deg,var(--pr),var(--prL));color:#fff;box-shadow:0 4px 12px rgba(255,136,0,0.24)}
+.btn-pr:hover{transform:translateY(-1px);box-shadow:0 6px 16px rgba(255,136,0,0.34)}
+.btn-rd{background:var(--rdB);color:var(--rd);border:1px solid var(--rdBr)!important}
+.btn-rd:hover{background:var(--rd);color:#fff}
+.btn-yw{background:var(--ywB);color:var(--yw);border:1px solid var(--ywBr)!important}
+.btn-yw:hover{background:var(--yw);color:#fff}
+.btn-bl{background:var(--blB);color:var(--bl);border:1px solid var(--blBr)!important}
+.btn-bl:hover{background:var(--bl);color:#fff}
+.btn-gn{background:var(--gnB);color:var(--gn);border:1px solid var(--gnBr)!important}
+.btn-gn:hover{background:var(--gn);color:#fff}
+.btn-gh{background:transparent;color:var(--txM);border:1px solid var(--bd)!important}
+.btn-gh:hover{background:var(--sf);color:var(--tx)}
+
+/* FORM */
+.flbl{display:block;font-size:12px;font-weight:600;color:var(--tx);margin-bottom:5px}
+.finp,.fsel{width:100%;padding:9px 13px;border-radius:8px;border:1.5px solid var(--bd);background:#fff;color:var(--tx);font-size:13px;transition:all 0.17s}
+.fhint{font-size:11px;color:var(--txM);margin-top:4px}
+.fwrap{margin-bottom:14px}
+
+/* TABLE */
+.twrap{border-radius:16px;border:1px solid var(--bd);background:#fff;overflow:hidden}
+.tscroll{overflow-x:auto}
+table{width:100%;border-collapse:collapse}
+thead tr{background:#fff8ec}
+th{padding:11px 14px;text-align:left;font-size:10px;font-weight:700;color:var(--prD);text-transform:uppercase;letter-spacing:0.7px;border-bottom:2px solid var(--prBr);white-space:nowrap}
+td{padding:10px 14px;font-size:13px;border-bottom:1px solid var(--bd);color:var(--tx);vertical-align:middle}
+tbody tr:last-child td{border-bottom:none}
+tbody tr:hover td{background:var(--sf)}
+.tempty{padding:52px 24px;text-align:center;color:var(--txM);font-size:14px}
+
+/* BADGE */
+.badge{display:inline-block;border-radius:6px;padding:3px 9px;font-size:11px;font-weight:700;letter-spacing:0.4px}
+.ba{background:var(--rdB);color:var(--rd);border:1px solid var(--rdBr)}
+.bb{background:var(--ywB);color:var(--yw);border:1px solid var(--ywBr)}
+.bc{background:var(--gnB);color:var(--gn);border:1px solid var(--gnBr)}
+
+/* BANNER */
+.banner{border-radius:12px;padding:11px 16px;margin-bottom:16px;display:flex;align-items:flex-start;gap:10px;font-size:13px;line-height:1.6}
+.ban-bl{background:var(--blB);border:1px solid var(--blBr);color:#1a56a0}
+.ban-rd{background:var(--rdB);border:1px solid var(--rdBr);color:var(--rd)}
+.ban-gn{background:var(--gnB);border:1px solid var(--gnBr);color:#065f46}
+.ban-pr{background:var(--prBg);border:1px solid var(--prBr);color:var(--prD)}
+.ban-ico{font-size:15px;flex-shrink:0;margin-top:1px}
+
+/* TOOLBAR */
+.toolbar{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:14px;flex-wrap:wrap;gap:10px}
+.tb-title{font-size:16px;font-weight:800;color:var(--tx);font-family:'Plus Jakarta Sans',sans-serif;letter-spacing:-0.3px}
+.tb-sub{font-size:12px;color:var(--txM);margin-top:2px}
+.tb-actions{display:flex;gap:7px;flex-wrap:wrap;align-items:center}
+
+/* FORMULA */
+.fbox{border-radius:12px;padding:13px 16px;margin-bottom:11px}
+.fbox-pr{background:var(--prBg);border:1px solid var(--prBr)}
+.fbox-bl{background:var(--blB);border:1px solid var(--blBr)}
+.fbox-gn{background:var(--gnB);border:1px solid var(--gnBr)}
+.fbox-pu{background:var(--puB);border:1px solid var(--puBr)}
+.flabel{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:1px;margin-bottom:7px}
+.flabel-pr{color:var(--prD)} .flabel-bl{color:var(--bl)} .flabel-gn{color:var(--gn)} .flabel-pu{color:var(--pu)}
+.fmath{font-family:'Cambria Math','Georgia',serif;font-size:14px;line-height:1.9;color:var(--tx)}
+.fhi{margin-top:7px;padding:7px 11px;background:rgba(255,255,255,0.65);border-radius:6px;font-weight:700}
+.fnote{font-family:'DM Sans',sans-serif;font-size:11px;color:var(--txM);margin-top:5px;line-height:1.5}
+
+/* MODAL */
+.ov{position:fixed;inset:0;background:rgba(26,33,56,0.46);z-index:1000;display:flex;align-items:center;justify-content:center;backdrop-filter:blur(5px);padding:16px}
+.mbox{background:#fff;border-radius:16px;padding:26px;max-width:700px;width:100%;max-height:92vh;overflow-y:auto;box-shadow:0 24px 60px rgba(70,80,130,0.16);animation:su 0.27s ease-out}
+.mhdr{display:flex;justify-content:space-between;align-items:center;margin-bottom:18px;padding-bottom:14px;border-bottom:1px solid var(--bd)}
+.mtitle{font-size:15px;font-weight:800;color:var(--tx);font-family:'Plus Jakarta Sans',sans-serif}
+.mclose{background:var(--sf);border:none;width:30px;height:30px;border-radius:8px;font-size:17px;cursor:pointer;color:var(--txM);display:flex;align-items:center;justify-content:center}
+
+/* LOGIN */
+.login-wrap{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:24px;position:relative}
+.login-blob1{position:fixed;top:8%;left:5%;width:200px;height:200px;border-radius:50%;background:linear-gradient(135deg,#ffe4b3,#ffb340);filter:blur(60px);opacity:0.55;z-index:0}
+.login-blob2{position:fixed;bottom:10%;right:7%;width:250px;height:250px;border-radius:50%;background:linear-gradient(135deg,#c9d6ff,#e2b0ff);filter:blur(70px);opacity:0.4;z-index:0}
+.login-card{max-width:420px;width:100%;position:relative;z-index:1}
+.login-logo{width:70px;height:70px;border-radius:18px;background:linear-gradient(135deg,var(--pr),var(--prL));display:flex;align-items:center;justify-content:center;font-size:32px;margin:0 auto 14px;box-shadow:0 10px 26px rgba(255,136,0,0.28)}
+.tabbar{display:flex;gap:3px;background:var(--sf);border-radius:11px;padding:3px;margin-bottom:22px}
+.tabbtn{flex:1;padding:8px;border-radius:9px;border:none;background:transparent;font-family:inherit;font-size:12px;font-weight:700;cursor:pointer;transition:all 0.18s;color:var(--txM)}
+.tabbtn.on{background:#fff;color:var(--prD);box-shadow:0 2px 8px rgba(70,80,130,0.08)}
+
+/* STATUS PILLS */
+.sp{padding:3px 9px;border-radius:6px;font-size:11px;font-weight:700;display:inline-block}
+.sp-kritis{background:var(--rdB);color:var(--rd);border:1px solid var(--rdBr)}
+.sp-waspada{background:var(--ywB);color:var(--yw);border:1px solid var(--ywBr)}
+.sp-aman{background:var(--gnB);color:var(--gn);border:1px solid var(--gnBr)}
+.sp-hangus{background:var(--puB);color:var(--pu);border:1px solid var(--puBr)}
+.sp-pesan{background:var(--rdB);color:var(--rd);border:1px solid var(--rdBr);font-weight:800}
+
+/* FILTER PILLS */
+.fp-wrap{display:flex;gap:9px;margin-bottom:16px;flex-wrap:wrap}
+.fp{padding:9px 16px;border-radius:12px;border:2px solid var(--bd);background:#fff;cursor:pointer;transition:all 0.17s;font-family:inherit;text-align:left}
+.fp.on-all{border-color:var(--pr);background:var(--prBg)}
+.fp.on-A{border-color:var(--rd);background:var(--rdB)}
+.fp.on-B{border-color:var(--yw);background:var(--ywB)}
+.fp.on-C{border-color:var(--gn);background:var(--gnB)}
+.fp-lbl{font-size:13px;font-weight:700}
+.fp-sub{font-size:10px;color:var(--txM);margin-top:2px}
+
+/* PROGRESS */
+.pbar{background:var(--sf);border-radius:4px;height:7px;width:100%;overflow:hidden;margin-bottom:2px}
+.pfill{height:100%;border-radius:4px;transition:width 0.5s}
+
+/* WELCOME BANNER */
+.wb{padding:22px 28px;border-radius:16px;color:#fff;background:linear-gradient(135deg,var(--pr) 0%,var(--prL) 100%);position:relative;overflow:hidden;margin-bottom:20px;box-shadow:0 10px 26px rgba(255,136,0,0.24)}
+.wb-ghost{position:absolute;right:-15px;top:-15px;font-size:150px;opacity:0.09;line-height:1;pointer-events:none}
+
+/* GRID */
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.g4{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
+.s2{grid-column:span 2}
+.fr{display:flex;gap:12px;flex-wrap:wrap}
+
+/* PARAMS ROW */
+.prow{display:flex;gap:10px;flex-wrap:wrap}
+.pi{flex:1;min-width:100px}
+.pk{font-size:11px;color:var(--txM);margin-bottom:2px}
+.pv{font-size:13px;font-weight:700;color:var(--tx)}
+
+@keyframes fi{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
+@keyframes su{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:0.5}}
+.fi{animation:fi 0.32s ease-out}
+</style>
+</head>
+<body>
+
+<!-- ===== LOGIN ===== -->
+<div id="pg-login" style="display:none">
+  <div class="app-bg login-wrap">
+    <div class="login-blob1"></div>
+    <div class="login-blob2"></div>
+    <div class="login-card">
+      <div class="glass" style="padding:30px">
+        <div class="login-logo">🏍️</div>
+        <div style="text-align:center;margin-bottom:4px">
+          <div style="font-size:24px;font-weight:800;font-family:'Plus Jakarta Sans',sans-serif;letter-spacing:-0.5px">Permata Motor</div>
+          <div style="font-size:10px;color:var(--txM);letter-spacing:1px;font-weight:600;margin-top:2px">DSS MANAJEMEN INVENTORI · SHOLEHAH TEAM</div>
+        </div>
+        <div style="height:20px"></div>
+        <div class="tabbar">
+          <button class="tabbtn on" id="tab-masuk" onclick="switchLoginTab('masuk')">Masuk</button>
+          <button class="tabbtn" id="tab-daftar" onclick="switchLoginTab('daftar')">Daftar</button>
+        </div>
+        <div id="login-msg"></div>
+
+        <!-- MASUK -->
+        <div id="lf-masuk">
+          <div class="fwrap"><label class="flbl">Username</label><input id="l-user" class="finp" placeholder="Masukkan username"></div>
+          <div class="fwrap"><label class="flbl">Password</label><input id="l-pass" class="finp" type="password" placeholder="Masukkan password"></div>
+          <button class="btn btn-pr btn-lg" style="width:100%;justify-content:center;margin-bottom:10px" onclick="doLogin()">Masuk ke Sistem →</button>
+          <div style="text-align:center;font-size:12px;color:var(--txM)">Belum punya akun? <button onclick="switchLoginTab('daftar')" style="background:none;border:none;color:var(--pr);font-weight:700;cursor:pointer;font-size:12px">Daftar di sini</button></div>
+        </div>
+
+        <!-- PIN -->
+        <div id="lf-pin" style="display:none">
+          <div style="text-align:center;margin-bottom:16px">
+            <div style="font-size:28px;margin-bottom:8px">🔐</div>
+            <div style="font-weight:700;font-size:14px">Verifikasi Akses Manajer</div>
+            <div style="font-size:12px;color:var(--txM);margin-top:3px">Masukkan PIN 6-digit yang dibuat saat registrasi</div>
+          </div>
+          <input id="l-pin" class="finp" type="password" maxlength="6" placeholder="••••••" style="text-align:center;font-size:24px;letter-spacing:10px;font-weight:700;font-family:monospace;margin-bottom:12px">
+          <button class="btn btn-pr btn-lg" style="width:100%;justify-content:center;margin-bottom:8px" onclick="doPin()">Verifikasi PIN</button>
+          <button class="btn btn-gh btn-lg" style="width:100%;justify-content:center" onclick="showLoginForm()">← Kembali</button>
+        </div>
+
+        <!-- DAFTAR -->
+        <div id="lf-daftar" style="display:none">
+          <div class="fwrap"><label class="flbl">Nama Lengkap <span style="color:var(--rd)">*</span></label><input id="r-nama" class="finp" placeholder="Budi Santoso"></div>
+          <div class="fwrap"><label class="flbl">Username <span style="color:var(--rd)">*</span></label><input id="r-user" class="finp" placeholder="username unik"></div>
+          <div class="fwrap"><label class="flbl">Password <span style="color:var(--rd)">*</span></label><input id="r-pass" class="finp" type="password" placeholder="Min. 6 karakter"></div>
+          <div class="fwrap">
+            <label class="flbl">Role</label>
+            <select id="r-role" class="fsel">
+              <option value="kasir">Kasir — akses Dashboard dan Penjualan</option>
+              <option value="gudang">Gudang — akses Dashboard dan Barang Masuk</option>
+              <option value="manajer">Manajer — akses penuh, butuh PIN</option>
+            </select>
+            <div class="fhint">Manajer mendapat PIN 6-digit otomatis setelah daftar</div>
+          </div>
+          <button class="btn btn-pr btn-lg" style="width:100%;justify-content:center" onclick="doReg()">Daftar Sekarang</button>
+        </div>
+      </div>
+      <div style="text-align:center;margin-top:14px;font-size:11px;color:var(--txM)">© 2026 Permata Motor Bandung · Sholehah Team</div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== MAIN APP ===== -->
+<div id="pg-app" style="display:none" class="app-bg">
+
+  <!-- LAYER 1: TOPBAR -->
+  <div class="topbar">
+    <div class="topbar-in">
+      <div class="brand">
+        <div class="brand-logo">🏍️</div>
+        <div>
+          <div class="brand-name">Permata Motor</div>
+          <div class="brand-sub">DSS INVENTORI · SHOLEHAH TEAM</div>
+        </div>
+      </div>
+      <div style="display:flex;align-items:center;gap:10px">
+        <div class="user-badge">
+          <span id="ub-icon" style="font-size:16px">👔</span>
+          <div>
+            <div class="user-lbl">masuk sebagai</div>
+            <div class="user-name" id="ub-name">—</div>
+          </div>
+        </div>
+        <button class="btn btn-gh btn-sm" onclick="doLogout()">🚪 Keluar</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- LAYER 2: NAV TABS -->
+  <div class="navtabs">
+    <div class="navtabs-in" id="nav-tabs"></div>
+  </div>
+
+  <!-- LAYER 3: ROLE NOTICE -->
+  <div class="role-notice" id="role-notice" style="display:none"></div>
+
+  <!-- LAYER 4: PAGE HEADER -->
+  <div class="page-header">
+    <div style="font-size:10px;color:var(--txM);font-weight:700;letter-spacing:1px;text-transform:uppercase;margin-bottom:4px" id="hdr-date"></div>
+    <h1 style="font-size:26px;font-weight:800;letter-spacing:-0.5px;color:var(--tx)" id="hdr-title"></h1>
+    <div style="font-size:13px;color:var(--txM);margin-top:3px" id="hdr-sub"></div>
+  </div>
+
+  <!-- LAYER 5: PAGE CONTENT -->
+  <div class="page-content">
+    <div id="pg-dashboard" style="display:none"></div>
+    <div id="pg-inbound" style="display:none"></div>
+    <div id="pg-outbound" style="display:none"></div>
+    <div id="pg-abc" style="display:none"></div>
+    <div id="pg-rekomendasi" style="display:none"></div>
+    <div id="pg-panduan" style="display:none"></div>
+    <div id="pg-manajemen-sku" style="display:none"></div>
+    <div id="pg-kelola-user" style="display:none"></div>
+  </div>
+
+  <!-- LAYER 6: FOOTER -->
+  <div class="footer-bar">
+    <span>© 2026 Permata Motor Bandung · Sholehah Team</span>
+    <span>DSS Manajemen Inventori · SBA + EOQ + ABC Dinamis</span>
+  </div>
+</div>
+
+<!-- MODAL CONTAINER -->
+<div id="modal-root"></div>
+
+<script>
+'use strict';
+/* ============================================================
+   DATA
+   ============================================================ */
+const SKU = [
+  {id:'SP-001',nama:'Oli Mesin AHM MPX2 0.8L',harga:38500,demand:[59,116,105,65,127,119,119,68,47,66,97,46]},
+  {id:'SP-002',nama:'Oli Mesin Yamalube Super Matic',harga:52000,demand:[74,82,46,108,104,65,77,120,102,66,93,103]},
+  {id:'SP-003',nama:'Kampas Rem Depan Vario 125',harga:35000,demand:[104,124,59,106,106,91,106,95,99,108,47,95]},
+  {id:'SP-004',nama:'Kampas Rem Belakang Beat FI',harga:42000,demand:[65,117,83,62,48,104,58,53,97,46,128,104]},
+  {id:'SP-005',nama:'Busi NGK CPR9EA-9',harga:28500,demand:[52,91,79,122,125,80,94,48,46,50,98,48]},
+  {id:'SP-006',nama:'Filter Udara Honda Beat',harga:32000,demand:[88,104,124,120,118,94,49,105,69,118,78,119]},
+  {id:'SP-007',nama:'Busi Denso U27EPR-9',harga:25000,demand:[62,53,121,124,45,111,48,126,54,48,83,125]},
+  {id:'SP-008',nama:'Filter Oli Yamaha NMAX',harga:28000,demand:[79,50,56,99,108,74,118,109,49,103,101,55]},
+  {id:'SP-009',nama:'Oli Gardan Shell Advance',harga:28500,demand:[55,64,74,107,46,47,51,103,86,103,122,53]},
+  {id:'SP-010',nama:'Kampas Rem Depan NMAX',harga:28000,demand:[56,82,52,75,59,108,81,119,101,49,114,93]},
+  {id:'SP-011',nama:'Ban Luar IRC 80/90-14',harga:95000,demand:[29,16,11,24,22,23,9,11,5,10,11,11]},
+  {id:'SP-012',nama:'Ban Luar Federal 90/90-14',harga:145000,demand:[10,19,10,12,7,14,11,5,28,6,10,25]},
+  {id:'SP-013',nama:'Aki GS Astra GTZ5S',harga:125000,demand:[15,6,5,15,6,15,9,24,10,20,9,17]},
+  {id:'SP-014',nama:'Rantai Set Indopart Revo',harga:125000,demand:[24,23,24,10,17,12,20,10,18,6,28,17]},
+  {id:'SP-015',nama:'V-Belt Kit Honda Vario 150',harga:95000,demand:[13,19,23,19,16,27,12,9,24,18,25,11]},
+  {id:'SP-016',nama:'Roller Set Suzuki Nex',harga:115000,demand:[28,29,26,21,24,23,14,21,14,22,7,26]},
+  {id:'SP-017',nama:'Kabel Gas Honda Supra X 125',harga:42000,demand:[18,24,28,17,20,9,29,13,11,22,19,22]},
+  {id:'SP-018',nama:'Kabel Kopling Yamaha Vixion',harga:35000,demand:[21,20,7,13,25,12,21,28,13,19,16,17]},
+  {id:'SP-019',nama:'Bohlam Depan Osram 35W',harga:45000,demand:[29,7,16,18,18,29,22,9,28,17,9,13]},
+  {id:'SP-020',nama:'Spion Standar Honda Vario',harga:85000,demand:[15,23,23,20,5,6,27,19,7,5,29,10]},
+  {id:'SP-021',nama:'Gir Set Yamaha Jupiter Z',harga:125000,demand:[21,13,24,9,16,21,9,12,20,18,18,14]},
+  {id:'SP-022',nama:'Shockbreaker Belakang Kayaba',harga:265000,demand:[16,18,9,24,16,24,13,19,24,23,16,28]},
+  {id:'SP-023',nama:'Piringan Cakram Depan Beat',harga:125000,demand:[23,14,14,13,7,12,15,12,25,28,23,7]},
+  {id:'SP-024',nama:'Handgrip Karet Standar',harga:22000,demand:[13,12,11,25,25,20,13,29,28,12,12,21]},
+  {id:'SP-025',nama:'Kampas Ganda Beat FI',harga:95000,demand:[21,15,16,14,25,27,12,24,11,17,28,29]},
+  {id:'SP-026',nama:'Seal Shock Depan Tiger',harga:42000,demand:[15,21,19,12,11,13,14,24,7,20,10,25]},
+  {id:'SP-027',nama:'Bearing Roda Depan 6201',harga:32000,demand:[20,24,13,19,15,22,19,21,18,26,26,19]},
+  {id:'SP-028',nama:'Pelampung Bensin Mio',harga:55000,demand:[15,14,16,7,28,24,12,22,16,21,17,12]},
+  {id:'SP-029',nama:'Kunci Kontak Set Supra Fit',harga:75000,demand:[27,6,6,18,21,29,12,29,12,20,28,21]},
+  {id:'SP-030',nama:'Kampas Kopling GL Pro',harga:85000,demand:[26,6,23,27,7,16,19,7,17,26,17,22]},
+  {id:'SP-031',nama:'Paking Head Karisma',harga:55000,demand:[18,6,27,14,19,14,22,24,24,29,22,7]},
+  {id:'SP-032',nama:'Baut Crankcase Set',harga:45000,demand:[12,18,15,17,18,15,29,23,29,27,16,26]},
+  {id:'SP-033',nama:'Karet Tromol RX King',harga:95000,demand:[7,27,28,21,13,25,19,24,10,17,12,6]},
+  {id:'SP-034',nama:'Tutup Tangki Bensin Universal',harga:35000,demand:[24,22,15,20,27,17,23,16,28,14,16,10]},
+  {id:'SP-035',nama:'Filter Bensin Universal',harga:22000,demand:[21,5,16,14,16,12,10,29,27,22,10,14]},
+  {id:'SP-036',nama:'ECU Ori Honda CBR 250RR',harga:3500000,demand:[1,0,1,1,1,2,0,3,2,1,1,1]},
+  {id:'SP-037',nama:'Cylinder Block Set Ninja 150RR',harga:1200000,demand:[1,0,0,0,0,0,0,0,0,1,0,0]},
+  {id:'SP-038',nama:'Crankshaft Comp Yamaha Mio',harga:500000,demand:[0,0,0,1,0,0,0,0,2,0,0,0]},
+  {id:'SP-039',nama:'Reflektor Lampu Depan Vario 110',harga:300000,demand:[0,1,0,2,0,1,0,0,0,0,0,2]},
+  {id:'SP-040',nama:'Spakbor Depan Scoopy White',harga:200000,demand:[1,0,0,3,0,0,2,0,0,3,0,3]},
+  {id:'SP-041',nama:'Wiring Harness Beat Street',harga:1200000,demand:[1,0,2,0,0,2,0,1,0,0,0,1]},
+  {id:'SP-042',nama:'Speedometer Digital Aerox',harga:500000,demand:[1,0,0,2,0,2,0,0,0,0,3,0]},
+  {id:'SP-043',nama:'Fuel Pump Assy Vario 125',harga:1200000,demand:[2,0,1,0,0,3,0,0,0,1,0,2]},
+  {id:'SP-044',nama:'Radiator Comp CBR150R',harga:500000,demand:[1,0,0,2,0,0,0,0,0,2,0,1]},
+  {id:'SP-045',nama:'Velg Racing Depan NMAX',harga:2500000,demand:[1,0,1,0,0,1,1,0,1,0,0,0]},
+  {id:'SP-046',nama:'Swing Arm Yamaha R15',harga:2500000,demand:[2,1,3,1,1,1,1,0,1,1,0,3]},
+  {id:'SP-047',nama:'Karburator Assy Suzuki Satria FU',harga:500000,demand:[3,0,2,0,0,0,2,0,0,0,0,3]},
+  {id:'SP-048',nama:'Knalpot Standar Honda PCX 160',harga:3500000,demand:[1,1,1,0,2,1,3,1,2,4,0,1]},
+  {id:'SP-049',nama:'Magnet Comp Yamaha Jupiter MX',harga:500000,demand:[0,2,0,0,0,0,0,0,1,0,0,2]},
+  {id:'SP-050',nama:'Piston Kit Kawasaki Ninja 250',harga:1200000,demand:[0,1,0,0,0,0,0,0,0,1,0,0]},
+];
+const INTERMITTENT = ['SP-037','SP-038','SP-039','SP-040','SP-042','SP-043','SP-044','SP-047','SP-049','SP-050'];
+
+// Gabungkan SKU bawaan + SKU custom dari localStorage
+function getAllSKU(){
+  const custom=LS.get('pm_sku_custom',[]);
+  return [...SKU,...custom];
+}
+function getAllSKUIds(){return getAllSKU().map(s=>s.id)}
+const ALPHA=0.1, S_COST=55000, H_RATE=0.25, LT=1, Z_SVC=1.645;
+const ROLE_ACCESS = {manajer:['dashboard','inbound','outbound','rekomendasi','abc','panduan','manajemen-sku','kelola-user'],kasir:['dashboard','outbound','panduan'],gudang:['dashboard','inbound','panduan']};
+const NAV = [{key:'dashboard',label:'Dashboard',icon:'🏠'},{key:'inbound',label:'Barang Masuk',icon:'📥'},{key:'outbound',label:'Penjualan',icon:'📤'},{key:'rekomendasi',label:'Rekomendasi',icon:'🎯'},{key:'abc',label:'Klasifikasi ABC',icon:'📊'},{key:'panduan',label:'Panduan',icon:'📖'},{key:'manajemen-sku',label:'Kelola SKU',icon:'🔧'},{key:'kelola-user',label:'Kelola User',icon:'👥'}];
+const TITLES = {dashboard:['Dashboard Inventori','Ringkasan kondisi gudang dan alert garansi'],inbound:['Penerimaan Barang Masuk','Catat kedatangan suku cadang dari supplier'],outbound:['Pencatatan Penjualan','Catat transaksi keluar harian'],rekomendasi:['Rekomendasi Pemesanan','Forecast SBA + EOQ untuk SKU Intermittent'],abc:['Klasifikasi ABC','Pengelompokan 50 SKU berdasarkan nilai konsumsi tahunan'],panduan:['Panduan Pengguna','Cara menggunakan sistem sesuai role Anda'],'manajemen-sku':['Kelola SKU','Tambah, edit, atau hapus kode barang yang terdaftar di sistem'],'kelola-user':['Kelola User & Akses','Pantau siapa yang mengakses sistem, kelola akun, dan lihat riwayat aktivitas']};
+
+/* ============================================================
+   STORAGE
+   ============================================================ */
+const LS = {
+  get:(k,d=[])=>{try{return JSON.parse(localStorage.getItem(k))||d}catch{return d}},
+  set:(k,v)=>localStorage.setItem(k,JSON.stringify(v)),
+  obj:(k)=>{try{return JSON.parse(localStorage.getItem(k))||{}}catch{return{}}},
+};
+function initStorage(){
+  if(!localStorage.getItem('pm_users')) LS.set('pm_users',[]);
+  const inb=LS.get('pm_inbound');
+  if(!localStorage.getItem('pm_stok')||inb.length===0){
+    const s={};SKU.forEach(x=>{s[x.id]=0});LS.set('pm_stok',s);
+  }
+  if(!localStorage.getItem('pm_garansi')) LS.set('pm_garansi',[]);
+  if(!localStorage.getItem('pm_penjualan')) LS.set('pm_penjualan',[]);
+  if(!localStorage.getItem('pm_inbound')) LS.set('pm_inbound',[]);
+  if(!localStorage.getItem('pm_sku_custom')) LS.set('pm_sku_custom',[]);
+  if(!localStorage.getItem('pm_access_log')) LS.set('pm_access_log',[]);
+}
+initStorage();
+
+// ============================================================
+// SESSION — simpan user yang sedang login ke localStorage
+// agar tidak perlu login ulang saat browser dibuka kembali
+// ============================================================
+function saveSession(u){
+  // Simpan hanya data minimal yang aman (bukan password)
+  LS.set('pm_session',{
+    id:u.id,username:u.username,nama:u.nama,role:u.role,
+    loginAt:new Date().toISOString()
+  });
+}
+function clearSession(){
+  localStorage.removeItem('pm_session');
+}
+function getSession(){
+  try{
+    const s=JSON.parse(localStorage.getItem('pm_session'));
+    if(!s) return null;
+    // Verifikasi session masih valid — user masih ada di database
+    const u=LS.get('pm_users').find(x=>x.id===s.id&&x.username===s.username);
+    if(!u) return null; // user dihapus oleh manajer
+    return u; // kembalikan data user terbaru dari database
+  }catch{return null}
+}
+
+// ============================================================
+// ACCESS LOG — catat setiap aktivitas login/logout/input
+// ============================================================
+function logActivity(tipe,detail){
+  const u=APP.user;
+  const log=LS.get('pm_access_log');
+  const entry={
+    id:Date.now(),
+    waktu:new Date().toISOString(),
+    username:u?u.username:'sistem',
+    nama:u?u.nama:'—',
+    role:u?u.role:'—',
+    tipe,detail
+  };
+  // Simpan maksimal 500 log terakhir
+  const updated=[entry,...log].slice(0,500);
+  LS.set('pm_access_log',updated);
+}
+
+/* ============================================================
+   HELPERS
+   ============================================================ */
+const fmtRp = n => 'Rp ' + Math.round(Number(n)||0).toLocaleString('id-ID');
+const getHargaJual = skuId => {
+  const hj=LS.obj('pm_hargajual');
+  const m=SKU.find(s=>s.id===skuId);
+  return hj[skuId]||(m?Math.round(m.harga*1.25):0);
+};
+const today = () => new Date().toISOString().split('T')[0];
+const addDays = (s,n) => { const d=new Date(s); d.setDate(d.getDate()+n); return d.toISOString().split('T')[0]; };
+const diffDays = t => { const n=new Date(); n.setHours(0,0,0,0); return Math.floor((new Date(t)-n)/86400000); };
+const genPIN = () => Math.floor(100000+Math.random()*900000).toString();
+const g = id => document.getElementById(id);
+const esc = s => String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+
+let _alOn=false,_alInt=null;
+function playAlarm(){if(_alOn)return;_alOn=true;const b=()=>{try{const c=new(window.AudioContext||window.webkitAudioContext)();[[880,0],[660,0.38]].forEach(([f,t])=>{const o=c.createOscillator(),g=c.createGain();o.connect(g);g.connect(c.destination);o.frequency.value=f;o.type='square';g.gain.value=1.1;o.start(c.currentTime+t);o.stop(c.currentTime+t+0.3)})}catch(e){}};b();_alInt=setInterval(b,1800)}
+function stopAlarm(){_alOn=false;if(_alInt){clearInterval(_alInt);_alInt=null}}
+
+function exportCSV(rows,headers,fn){
+  const csv=[headers.join(','),...rows.map(r=>r.map(x=>`"${String(x).replace(/"/g,'""')}"`).join(','))].join('\n');
+  const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([csv],{type:'text/csv;charset=utf-8;'}));a.download=fn;a.click();
+}
+
+function exportExcel(rows,headers,sheetName,fn){
+  // Buat HTML table yang Excel bisa buka
+  const esc2=s=>String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+  const th=headers.map(h=>`<th style="background:#fff5e6;color:#cc6600;font-weight:700;border:1px solid #ffd9a8;padding:8px">${esc2(h)}</th>`).join('');
+  const trs=rows.map(r=>`<tr>${r.map(c=>`<td style="border:1px solid #e6ebf3;padding:6px">${esc2(c)}</td>`).join('')}</tr>`).join('');
+  const html=`<html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:x="urn:schemas-microsoft-com:office:excel"><head><meta charset="utf-8"><xml><x:ExcelWorkbook><x:ExcelWorksheets><x:ExcelWorksheet><x:Name>${sheetName}</x:Name><x:WorksheetOptions><x:DisplayGridlines/></x:WorksheetOptions></x:ExcelWorksheet></x:ExcelWorksheets></x:ExcelWorkbook></xml></head><body><table><thead><tr>${th}</tr></thead><tbody>${trs}</tbody></table></body></html>`;
+  const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([html],{type:'application/vnd.ms-excel;charset=utf-8;'}));a.download=fn;a.click();
+}
+
+function exportPDFTable(rows,headers,title,subtitle){
+  const esc2=s=>String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+  const th=headers.map(h=>`<th>${esc2(h)}</th>`).join('');
+  const trs=rows.map((r,i)=>`<tr class="${i%2===0?'even':''}">${r.map(c=>`<td>${esc2(c)}</td>`).join('')}</tr>`).join('');
+  const w=window.open('','_blank');
+  w.document.write(`<!DOCTYPE html><html><head><meta charset="utf-8"><title>${title}</title>
+  <style>
+    *{box-sizing:border-box;margin:0;padding:0}
+    body{font-family:Arial,sans-serif;font-size:11px;padding:20px;color:#1a2138}
+    .header{border-bottom:3px solid #ff8800;padding-bottom:12px;margin-bottom:16px}
+    h1{font-size:16px;color:#cc6600;margin-bottom:3px}
+    .sub{font-size:11px;color:#6b7280}
+    table{width:100%;border-collapse:collapse;margin-top:12px}
+    th{background:#fff5e6;color:#cc6600;font-size:10px;text-transform:uppercase;letter-spacing:0.5px;padding:8px;border:1px solid #ffd9a8;text-align:left}
+    td{padding:7px 8px;border:1px solid #e6ebf3;vertical-align:top}
+    tr.even td{background:#fafbfd}
+    .footer{margin-top:16px;font-size:10px;color:#9aa3b2;text-align:right}
+    @media print{body{padding:10px}}
+  </style></head><body>
+  <div class="header"><h1>🏍️ Permata Motor DSS — ${title}</h1><div class="sub">${subtitle} · Dicetak: ${new Date().toLocaleString('id-ID')}</div></div>
+  <table><thead><tr>${th}</tr></thead><tbody>${trs}</tbody></table>
+  <div class="footer">Permata Motor Bandung · Sholehah Team · DSS Manajemen Inventori</div>
+  </body></html>`);
+  w.document.close();
+  setTimeout(()=>w.print(),400);
+}
+
+/* ============================================================
+   CALCULATIONS
+   ============================================================ */
+function calcABC(bulan='semua'){
+  const semuaP=LS.get('pm_penjualan');
+  const penjualan=bulan==='semua'?semuaP:semuaP.filter(p=>p.tanggal.startsWith(bulan));
+  const aktual={};
+  penjualan.forEach(p=>{aktual[p.sku]=(aktual[p.sku]||0)+p.jumlah});
+  const allSKU=getAllSKU();
+  const rows=allSKU.map(s=>{
+    const totalDemand=aktual[s.id]||0;
+    return{...s,totalDemand,acv:totalDemand*s.harga};
+  });
+  rows.sort((a,b)=>b.acv-a.acv);
+  const grand=rows.reduce((s,r)=>s+r.acv,0);
+  let cum=0;
+  return rows.map((r,i)=>{cum+=r.acv;const pk=grand>0?cum/grand:0;return{...r,rank:i+1,pk,kelas:pk<=0.797?'A':pk<=0.939?'B':'C'}});
+}
+
+function calcSBA(bulan='semua'){
+  const semuaP=LS.get('pm_penjualan');
+  const penjualan=bulan==='semua'?semuaP:semuaP.filter(p=>p.tanggal.startsWith(bulan));
+  const allSKUList=getAllSKU();
+  return INTERMITTENT.map(skuId=>{
+    const m=allSKUList.find(s=>s.id===skuId)||SKU.find(s=>s.id===skuId);
+    if(!m) return{sku:skuId,nama:skuId,harga:0,periode:0,adi:0,cv:0,Z:0,I:0,fc:0,H_unit:0,D_annual:0,eoq:0,sigma:0,ss:0,demLT:0,rop:0,noData:true};
+    const ext=penjualan.filter(p=>p.sku===skuId).map(p=>p.jumlah);
+    const all=[...ext];const n=all.length;
+    const nzIdx=all.map((d,i)=>d>0?i:-1).filter(i=>i>=0);
+    const adi=nzIdx.length===0?n:n/nzIdx.length;
+    const nz=all.filter(d=>d>0);
+    let cv=0;
+    if(nz.length>1){const mu=nz.reduce((a,b)=>a+b,0)/nz.length;const v=nz.reduce((s,d)=>s+(d-mu)**2,0)/nz.length;cv=mu>0?Math.sqrt(v)/mu:0}
+    let Z=nz[0]||1,I=nzIdx.length>1?nzIdx[1]-nzIdx[0]:adi,last=nzIdx[0]||0;
+    for(let i=1;i<n;i++){if(all[i]>0){Z=(1-ALPHA)*Z+ALPHA*all[i];I=(1-ALPHA)*I+ALPHA*(i-last);last=i}}
+    // jika belum ada data penjualan sama sekali, kembalikan nilai 0
+    if(n===0||nz.length===0){
+      return{sku:skuId,nama:m.nama,harga:m.harga,periode:0,adi:0,cv:0,Z:0,I:0,fc:0,H_unit:m.harga*H_RATE,D_annual:0,eoq:0,sigma:0,ss:0,demLT:0,rop:0,noData:true};
+    }
+    const rawFc=(Z*(1-ALPHA/2))/I;
+    const fc=isFinite(rawFc)&&!isNaN(rawFc)?rawFc:0;
+    const H=m.harga*H_RATE,D=fc*52;
+    const eoq=H>0&&D>0?Math.max(1,Math.round(Math.sqrt(2*D*S_COST/H))):0;
+    const sigma=cv*fc;
+    const ss=sigma>0?Math.max(1,Math.ceil(Z_SVC*sigma)):0;
+    const demLT=Math.ceil(fc*LT);
+    return{sku:skuId,nama:m.nama,harga:m.harga,periode:n,adi:+adi.toFixed(3),cv:+cv.toFixed(3),Z:+Z.toFixed(4),I:+I.toFixed(4),fc:+fc.toFixed(5),H_unit:H,D_annual:+D.toFixed(2),eoq,sigma:+sigma.toFixed(4),ss,demLT,rop:demLT+ss,noData:false};
+  });
+}
+
+/* ============================================================
+   APP STATE
+   ============================================================ */
+let APP = {user:null,page:'dashboard',abcData:null,abcFilter:'Semua',abcTS:null,sbaData:null,sbaTS:null,showAbcF:true,showRekF:true,outBulan:'semua',abcBulan:'semua',rekBulan:'semua'};
+
+/* ============================================================
+   ROUTING — show/hide pages WITHOUT re-render
+   ============================================================ */
+const PAGES = ['dashboard','inbound','outbound','abc','rekomendasi','panduan','manajemen-sku','kelola-user'];
+
+function setPage(key){
+  const allowed=ROLE_ACCESS[APP.user.role]||['dashboard'];
+  if(!allowed.includes(key)) return;
+  APP.page=key;
+  PAGES.forEach(p=>{g('pg-'+p).style.display=p===key?'block':'none'});
+  document.querySelectorAll('.ntab').forEach(t=>{
+    t.classList.toggle('active',t.dataset.key===key);
+  });
+  const [title,sub]=TITLES[key]||['',''];
+  g('hdr-title').textContent=title;
+  g('hdr-sub').textContent=sub;
+  // lazy render pages that need fresh data
+  if(key==='dashboard') renderDashboard();
+  if(key==='inbound') renderInbound();
+  if(key==='outbound') renderOutbound();
+  if(key==='abc') renderABC();
+  if(key==='rekomendasi') renderRekomendasi();
+  if(key==='panduan') renderPanduan();
+  if(key==='manajemen-sku') renderManajemenSKU();
+  if(key==='kelola-user') renderKelolaUser();
+  window.scrollTo(0,0);
+}
+
+/* ============================================================
+   LOGIN
+   ============================================================ */
+function switchLoginTab(tab){
+  ['masuk','daftar'].forEach(t=>{
+    g('tab-'+t).classList.toggle('on',t===tab);
+    g('lf-'+t).style.display=t===tab?'block':'none';
+  });
+  g('lf-pin').style.display='none';
+  g('login-msg').innerHTML='';
+}
+function showLoginForm(){g('lf-masuk').style.display='block';g('lf-pin').style.display='none';g('login-msg').innerHTML=''}
+
+function loginMsg(txt,ok=false){
+  g('login-msg').innerHTML=`<div class="banner ${ok?'ban-gn':'ban-rd'}" style="margin-bottom:14px"><span class="ban-ico">${ok?'✅':'⚠️'}</span><span>${txt}</span></div>`;
+}
+
+function doLogin(){
+  const user=g('l-user').value.trim(),pass=g('l-pass').value;
+  const u=LS.get('pm_users').find(u=>u.username===user&&u.password===pass);
+  if(!u){loginMsg('Username atau password salah.');return}
+  if(u.role==='manajer'){
+    APP._pending=u;
+    g('lf-masuk').style.display='none';
+    g('lf-pin').style.display='block';
+    g('login-msg').innerHTML='';
+  } else enterApp(u);
+}
+function doPin(){
+  const pin=g('l-pin').value;
+  if(APP._pending?.pin===pin){enterApp(APP._pending);APP._pending=null}
+  else loginMsg('PIN salah.');
+}
+function doReg(){
+  const nama=g('r-nama').value.trim(),user=g('r-user').value.trim(),pass=g('r-pass').value,role=g('r-role').value;
+  if(!nama||!user||!pass){loginMsg('Isi semua field.');return}
+  const users=LS.get('pm_users');
+  if(users.find(u=>u.username===user)){loginMsg('Username sudah dipakai.');return}
+  const pin=genPIN();
+  const newUser={id:Date.now(),nama,username:user,password:pass,role,pin,terdaftarPada:new Date().toISOString()};
+  LS.set('pm_users',[...users,newUser]);
+  // Log registrasi
+  const regLog=LS.get('pm_access_log');
+  LS.set('pm_access_log',[{id:Date.now()+1,waktu:new Date().toISOString(),username:user,nama,role,tipe:'REGISTER',detail:`Pendaftaran akun baru sebagai ${role}`},...regLog].slice(0,500));
+  switchLoginTab('masuk');
+  if(role==='manajer'){
+    g('login-msg').innerHTML=`<div class="banner ban-gn" style="margin-bottom:14px"><span class="ban-ico">✅</span><div><div style="font-weight:700;margin-bottom:8px">Registrasi berhasil!</div><div style="background:#fff;border-radius:8px;padding:12px;margin-bottom:8px;text-align:center"><div style="font-size:11px;color:var(--txM);margin-bottom:4px">PIN MANAJER ANDA</div><div style="font-size:30px;font-weight:800;letter-spacing:10px;color:var(--prD);font-family:monospace">${pin}</div></div><div style="font-size:12px;color:#065f46"><b>⚠️ Catat PIN ini sekarang.</b> PIN hanya muncul sekali. Anda butuh PIN ini setiap kali login sebagai Manajer.</div></div></div>`;
+  } else {
+    loginMsg('Registrasi berhasil. Silakan masuk.',true);
+  }
+}
+
+function enterApp(u, fromSession=false){
+  APP.user=u;
+  saveSession(u);
+  if(!fromSession) logActivity('LOGIN',`Login berhasil sebagai ${u.role}`);
+  g('pg-login').style.display='none';
+  g('pg-app').style.display='block';
+  const ri={manajer:'👔',kasir:'💼',gudang:'📦'};
+  g('ub-icon').textContent=ri[u.role]||'👤';
+  g('ub-name').textContent=`${u.nama} · ${u.role}`;
+  g('hdr-date').textContent=new Date().toLocaleDateString('id-ID',{weekday:'long',year:'numeric',month:'long',day:'numeric'}).toUpperCase();
+  const allowed=ROLE_ACCESS[u.role]||['dashboard'];
+  g('nav-tabs').innerHTML=NAV.filter(n=>allowed.includes(n.key)).map(n=>
+    `<button class="ntab" data-key="${n.key}" onclick="setPage('${n.key}')">${n.icon} ${n.label}</button>`
+  ).join('');
+  if(u.role!=='manajer'){
+    g('role-notice').style.display='block';
+    g('role-notice').textContent=u.role==='kasir'?'🔒 Mode Kasir — Akses: Dashboard, Penjualan, Panduan.':'🔒 Mode Gudang — Akses: Dashboard, Barang Masuk, Panduan.';
+  } else {
+    g('role-notice').style.display='none';
+  }
+  setPage('dashboard');
+}
+
+function doLogout(){
+  logActivity('LOGOUT','Keluar dari sistem');
+  stopAlarm();
+  clearSession();
+  APP={user:null,page:'dashboard',abcData:null,abcFilter:'Semua',abcTS:null,
+       sbaData:null,sbaTS:null,showAbcF:true,showRekF:true,
+       outBulan:'semua',abcBulan:'semua',rekBulan:'semua'};
+  g('pg-app').style.display='none';
+  g('pg-login').style.display='block';
+  switchLoginTab('masuk');
+}
+
+/* ============================================================
+   DASHBOARD
+   ============================================================ */
+function renderDashboard(){
+  const garansi=LS.get('pm_garansi');
+  const penjualan=LS.get('pm_penjualan');
+  const inbound=LS.get('pm_inbound');
+  const stok=LS.obj('pm_stok');
+  const merah=garansi.filter(g=>{ const d=diffDays(g.expiry); return d>=0&&d<=3});
+  const kuning=garansi.filter(g=>{ const d=diffDays(g.expiry); return d>3&&d<=10});
+  const hangus=garansi.filter(g=>diffDays(g.expiry)<0);
+  const aman=garansi.filter(g=>diffDays(g.expiry)>10);
+  const kerugian=hangus.reduce((s,g)=>s+g.jumlah*g.harga,0);
+  // hitung statistik penjualan
+  const totalOmzet=penjualan.reduce((s,p)=>s+p.total,0);
+  const totalUnit=penjualan.reduce((s,p)=>s+p.jumlah,0);
+  // omzet bulan ini
+  const bulanIni=new Date().toISOString().slice(0,7);
+  const penjualanBulanIni=penjualan.filter(p=>p.tanggal.startsWith(bulanIni));
+  const omzetBulanIni=penjualanBulanIni.reduce((s,p)=>s+p.total,0);
+  // stok SKU yang habis (stok=0 dan pernah ada inbound)
+  const skuHabis=SKU.filter(s=>(stok[s.id]||0)===0&&inbound.some(x=>x.sku===s.id));
+  // top 5 terlaris bulan ini
+  const skuPenjualanMap={};
+  penjualanBulanIni.forEach(p=>{skuPenjualanMap[p.sku]=(skuPenjualanMap[p.sku]||0)+p.jumlah});
+  const topSKU=Object.entries(skuPenjualanMap).sort((a,b)=>b[1]-a[1]).slice(0,5);
+  const isKosong=inbound.length===0&&penjualan.length===0;
+  if(merah.length>0&&!_alOn) playAlarm();
+
+  const rowBg=e=>{const d=diffDays(e);return d<0?'rgba(139,92,246,0.06)':d<=3?'rgba(230,55,87,0.06)':d<=10?'rgba(245,158,11,0.06)':'transparent'};
+  const pill=e=>{const d=diffDays(e);if(d<0)return`<span class="sp sp-hangus">HANGUS</span>`;if(d<=3)return`<span class="sp sp-kritis">KRITIS</span>`;if(d<=10)return`<span class="sp sp-waspada">WASPADA</span>`;return`<span class="sp sp-aman">AMAN</span>`};
+  const sisa=e=>{const d=diffDays(e);return d<0?`<b style="color:var(--pu)">${Math.abs(d)} hr lalu</b>`:`<b style="color:${d<=3?'var(--rd)':d<=10?'var(--yw)':'var(--gn)'}">${d} hr</b>`};
+
+  const isMgr=APP.user.role==='manajer';
+
+  const namaBln=b=>{try{const[y,m]=b.split('-');return new Date(+y,+m-1,1).toLocaleDateString('id-ID',{month:'long',year:'numeric'})}catch{return b}};
+
+  g('pg-dashboard').innerHTML=`
+  <div class="wb">
+    <div class="wb-ghost">🏍️</div>
+    <div style="position:relative;z-index:1">
+      <div style="font-size:11px;font-weight:600;opacity:0.88;letter-spacing:1px;margin-bottom:3px">SELAMAT DATANG KEMBALI</div>
+      <div style="font-size:22px;font-weight:800;font-family:'Plus Jakarta Sans',sans-serif;letter-spacing:-0.4px">${APP.user.nama} <span style="font-size:13px;opacity:0.88;font-weight:500;text-transform:capitalize">· ${APP.user.role}</span></div>
+      <div style="font-size:12px;opacity:0.85;margin-top:3px">${new Date().toLocaleDateString('id-ID',{weekday:'long',year:'numeric',month:'long',day:'numeric'})}</div>
+    </div>
+  </div>
+
+  ${isKosong?`
+  <div class="card" style="padding:26px;margin-bottom:20px;border:2px dashed var(--prBr);background:var(--prBg);text-align:center">
+    <div style="font-size:36px;margin-bottom:10px">🚀</div>
+    <div style="font-size:16px;font-weight:800;color:var(--prD);margin-bottom:6px">Sistem siap digunakan!</div>
+    <div style="font-size:13px;color:var(--txM);max-width:480px;margin:0 auto;line-height:1.7">Belum ada data tersimpan. Ikuti alur kerja di bawah untuk mulai menggunakan sistem ini dengan benar.</div>
+  </div>
+  <div style="font-size:12px;font-weight:700;color:var(--txM);text-transform:uppercase;letter-spacing:1px;margin-bottom:12px">📋 Alur Kerja Sistem</div>
+  <div style="display:flex;gap:12px;flex-wrap:wrap;margin-bottom:24px">
+    ${[
+      {n:'1',ic:'📥',t:'Catat Barang Masuk',d:'Setiap kali ada kiriman dari supplier, masuk ke menu Barang Masuk. Isi SKU, jumlah, dan tanggal terima. Stok langsung bertambah dan garansi 30 hari terhitung otomatis.',cl:'var(--bl)',bg:'var(--blB)',br:'var(--blBr)'},
+      {n:'2',ic:'📤',t:'Catat Setiap Penjualan',d:'Setiap ada transaksi terjual, masuk ke menu Penjualan. Pilih SKU dan isi jumlah. Stok berkurang otomatis. Data ini jadi bahan perhitungan analisis.',cl:'var(--gn)',bg:'var(--gnB)',br:'var(--gnBr)'},
+      {n:'3',ic:'📊',t:'Cek Klasifikasi ABC',d:'Setelah ada minimal 10 transaksi penjualan, buka menu Klasifikasi ABC lalu klik Hitung Ulang. Sistem akan mengelompokkan mana barang terlaris (A), sedang (B), dan jarang laku (C).',cl:'var(--yw)',bg:'var(--ywB)',br:'var(--ywBr)'},
+      {n:'4',ic:'🎯',t:'Cek Rekomendasi',d:'Buka Rekomendasi, klik Hitung Ulang. Sistem akan memberi tahu berapa unit harus dipesan (EOQ) dan kapan harus pesan (ROP) untuk 10 barang dengan permintaan tidak teratur.',cl:'var(--rd)',bg:'var(--rdB)',br:'var(--rdBr)'},
+    ].map(s=>`
+    <div class="card" style="flex:1;min-width:220px;padding:20px;border-left:4px solid ${s.cl};background:${s.bg}">
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px">
+        <div style="width:24px;height:24px;border-radius:50%;background:${s.cl};color:#fff;font-size:11px;font-weight:800;display:flex;align-items:center;justify-content:center">${s.n}</div>
+        <div style="font-size:14px;font-weight:800;color:var(--tx)">${s.ic} ${s.t}</div>
+      </div>
+      <div style="font-size:12px;color:var(--txM);line-height:1.6">${s.d}</div>
+    </div>`).join('')}
+  </div>`:''}
+
+  <!-- 4 STAT CARDS -->
+  <div style="display:flex;gap:12px;flex-wrap:wrap;margin-bottom:20px">
+    <div class="stat-card"><div class="stat-strip" style="background:linear-gradient(90deg,var(--pr),var(--prL))"></div><div class="stat-ghost">📦</div><div style="position:relative"><div class="stat-ico" style="background:rgba(255,136,0,0.11)">📦</div><div class="stat-lbl">Total Jenis Barang</div><div class="stat-val">50</div><div class="stat-sub">SKU suku cadang motor</div></div></div>
+    <div class="stat-card"><div class="stat-strip" style="background:linear-gradient(90deg,var(--gn),#34d399)"></div><div class="stat-ghost" style="opacity:0.06">💰</div><div style="position:relative"><div class="stat-ico" style="background:rgba(16,185,129,0.1)">💰</div><div class="stat-lbl">Omzet Bulan Ini</div><div class="stat-val" style="color:var(--gn);font-size:${omzetBulanIni>9999999?'15px':omzetBulanIni>999999?'19px':'27px'}">${omzetBulanIni>0?fmtRp(omzetBulanIni):'—'}</div><div class="stat-sub">${penjualanBulanIni.length} transaksi bulan ini</div></div></div>
+    <div class="stat-card"><div class="stat-strip" style="background:linear-gradient(90deg,var(--bl),#60a5fa)"></div><div class="stat-ghost" style="opacity:0.06">📊</div><div style="position:relative"><div class="stat-ico" style="background:rgba(59,130,246,0.1)">📊</div><div class="stat-lbl">Total Omzet Keseluruhan</div><div class="stat-val" style="color:var(--bl);font-size:${totalOmzet>9999999?'15px':totalOmzet>999999?'19px':'27px'}">${totalOmzet>0?fmtRp(totalOmzet):'—'}</div><div class="stat-sub">${penjualan.length} transaksi tercatat</div></div></div>
+    <div class="stat-card"><div class="stat-strip" style="background:linear-gradient(90deg,var(--rd),#ff6b8a)"></div><div class="stat-ghost" style="opacity:0.06">🔔</div><div style="position:relative"><div class="stat-ico" style="background:rgba(230,55,87,0.1)">🔔</div><div class="stat-lbl">Alert Garansi Kritis</div><div class="stat-val" style="color:${merah.length>0?'var(--rd)':'var(--gn)'}">${merah.length}</div><div class="stat-sub">${merah.length===0?'✅ Semua aman':'⚠️ ≤ 3 hari tersisa'}</div></div></div>
+  </div>
+
+  <!-- 3 PANEL DETAIL: Garansi, Stok, Top Laris -->
+  <div style="display:flex;gap:12px;flex-wrap:wrap;margin-bottom:20px">
+    <div class="card" style="flex:1;min-width:220px;padding:18px 20px">
+      <div style="font-size:11px;font-weight:700;color:var(--txM);text-transform:uppercase;letter-spacing:0.8px;margin-bottom:10px">🔔 Status Garansi Barang</div>
+      <div style="font-size:11px;color:var(--txD);margin-bottom:10px">Setiap barang yang masuk dari supplier otomatis punya garansi 30 hari.</div>
+      ${[
+        {label:'✅ Aman (lebih dari 10 hari)',val:aman.length+' item',c:'var(--gn)',bg:'var(--gnB)'},
+        {label:'⚠️ Waspada (4–10 hari)',val:kuning.length+' item',c:'var(--yw)',bg:'var(--ywB)'},
+        {label:'🔴 Kritis (kurang dari 3 hari)',val:merah.length+' item',c:'var(--rd)',bg:'var(--rdB)'},
+        {label:'💀 Hangus (melewati batas)',val:hangus.length+' item',c:'var(--pu)',bg:'var(--puB)'},
+      ].map(x=>`<div style="display:flex;justify-content:space-between;align-items:center;padding:7px 10px;border-radius:8px;background:${x.bg};margin-bottom:5px"><span style="font-size:12px;color:var(--txM)">${x.label}</span><span style="font-size:13px;font-weight:800;color:${x.c}">${x.val}</span></div>`).join('')}
+      ${hangus.length>0?`<div style="font-size:11px;color:var(--pu);margin-top:7px;padding:7px 10px;background:var(--puB);border-radius:8px">Potensi kerugian hangus: <b>${fmtRp(kerugian)}</b></div>`:''}
+    </div>
+
+    <div class="card" style="flex:1;min-width:220px;padding:18px 20px">
+      <div style="font-size:11px;font-weight:700;color:var(--txM);text-transform:uppercase;letter-spacing:0.8px;margin-bottom:10px">📦 Ringkasan Gudang</div>
+      <div style="font-size:11px;color:var(--txD);margin-bottom:10px">Data berdasarkan transaksi barang masuk dan penjualan yang sudah dicatat.</div>
+      ${isKosong?`<div style="text-align:center;padding:14px;color:var(--txM);font-size:12px;background:var(--sf);border-radius:8px">Belum ada aktivitas gudang</div>`:`
+      ${[
+        {label:'Jenis barang pernah masuk',val:[...new Set(inbound.map(x=>x.sku))].length+' jenis',c:'var(--bl)'},
+        {label:'SKU stok habis (perlu restock)',val:skuHabis.length+' jenis',c:skuHabis.length>0?'var(--rd)':'var(--gn)'},
+        {label:'Total penerimaan dari supplier',val:inbound.length+' kali masuk',c:'var(--pr)'},
+        {label:'Total unit terjual',val:totalUnit.toLocaleString('id-ID')+' unit',c:'var(--gn)'},
+      ].map(x=>`<div style="display:flex;justify-content:space-between;align-items:center;padding:7px 10px;border-radius:8px;background:var(--sf);border:1px solid var(--bd);margin-bottom:5px"><span style="font-size:12px;color:var(--txM)">${x.label}</span><span style="font-size:12px;font-weight:800;color:${x.c}">${x.val}</span></div>`).join('')}
+      `}
+    </div>
+
+    <div class="card" style="flex:1;min-width:220px;padding:18px 20px">
+      <div style="font-size:11px;font-weight:700;color:var(--txM);text-transform:uppercase;letter-spacing:0.8px;margin-bottom:10px">🏆 Top 5 Terlaris Bulan Ini</div>
+      <div style="font-size:11px;color:var(--txD);margin-bottom:10px">${new Date().toLocaleDateString('id-ID',{month:'long',year:'numeric'})}</div>
+      ${topSKU.length===0?`<div style="text-align:center;padding:14px;color:var(--txM);font-size:12px;background:var(--sf);border-radius:8px">Belum ada penjualan bulan ini</div>`:`
+      ${topSKU.map(([skuId,qty],i)=>{
+        const m=SKU.find(s=>s.id===skuId)||{nama:skuId};
+        const nm=m.nama.length>32?m.nama.slice(0,30)+'…':m.nama;
+        const pct=Math.round(qty/topSKU[0][1]*100);
+        return`<div style="margin-bottom:9px">
+          <div style="display:flex;justify-content:space-between;margin-bottom:3px">
+            <span style="font-size:11px;font-weight:600;color:var(--tx)">${i+1}. ${nm}</span>
+            <span style="font-size:11px;font-weight:800;color:var(--pr);white-space:nowrap">${qty} unit</span>
+          </div>
+          <div style="height:5px;background:var(--sf);border-radius:3px;overflow:hidden"><div style="height:100%;width:${pct}%;background:linear-gradient(90deg,var(--pr),var(--prL));border-radius:3px"></div></div>
+        </div>`;}).join('')}`}
+    </div>
+  </div>
+
+  ${merah.length>0?`<div class="banner ban-rd"><span class="ban-ico">🚨</span><span><b>Peringatan kritis.</b> ${merah.length} item garansi ≤ 3 hari. Segera lakukan penjualan atau retur ke supplier.</span></div>`:''}
+
+  <div class="toolbar">
+    <div>
+      <div class="tb-title">🔔 Tabel Alert Garansi</div>
+      <div class="tb-sub">Daftar lengkap semua barang beserta status garansi 30 hari sejak tanggal masuk</div>
+    </div>
+    <div class="tb-actions">
+      ${merah.length>0?`<button class="btn btn-gh btn-sm" id="btn-stop-alarm">🔕 Matikan Alarm</button>`:''}
+      <button class="btn btn-gn btn-sm" id="btn-exp-garansi">⬇ CSV</button>
+    </div>
+  </div>
+
+  <div class="twrap"><div class="tscroll">
+    ${garansi.length===0?`<div class="tempty" style="padding:40px 24px">
+      <div style="font-size:32px;margin-bottom:10px">📭</div>
+      <div style="font-weight:700;margin-bottom:6px">Belum ada data garansi</div>
+      <div style="font-size:12px;color:var(--txM)">Data garansi otomatis muncul setelah ada barang masuk dari menu <b>Barang Masuk</b>.</div>
+    </div>`:`
+    <table><thead><tr>
+      <th>SKU</th><th>Nama Barang</th><th style="text-align:center">Qty</th>
+      <th>Tgl Masuk</th><th>Batas Garansi</th><th style="text-align:center">Sisa</th>
+      <th>Status</th>${isMgr?'<th>Aksi</th>':''}
+    </tr></thead><tbody>
+      ${garansi.map(row=>`
+        <tr style="background:${rowBg(row.expiry)}">
+          <td style="font-weight:700;color:var(--prD)">${esc(row.sku)}</td>
+          <td>${esc(row.nama)}</td>
+          <td style="text-align:center">${row.jumlah}</td>
+          <td>${row.datang}</td>
+          <td>${row.expiry}</td>
+          <td style="text-align:center">${sisa(row.expiry)}</td>
+          <td>${pill(row.expiry)}</td>
+          ${isMgr?`<td><button class="btn btn-rd btn-sm" data-id="${row.id}" data-action="del-garansi">🗑️ Hapus</button></td>`:''}
+        </tr>`).join('')}
+    </tbody></table>`}
+  </div></div>`;
+
+  // events — attach AFTER innerHTML set
+  g('btn-stop-alarm')?.addEventListener('click',()=>{stopAlarm();renderDashboard()});
+  g('btn-exp-garansi')?.addEventListener('click',()=>{
+    exportCSV(LS.get('pm_garansi').map(r=>[r.sku,r.nama,r.jumlah,r.datang,r.expiry,diffDays(r.expiry)]),['SKU','Nama','Qty','Tgl Masuk','Batas','Sisa Hari'],'garansi.csv')
+  });
+  g('pg-dashboard').querySelectorAll('[data-action="del-garansi"]').forEach(btn=>{
+    btn.addEventListener('click',()=>{
+      const tid=btn.dataset.id;
+      openConfirm('Hapus data garansi ini?', ()=>{
+        LS.set('pm_garansi', LS.get('pm_garansi').filter(x=>String(x.id)!==tid));
+        renderDashboard();
+      });
+    });
+  });
+}
+
+/* ============================================================
+   INBOUND
+   ============================================================ */
+function renderInbound(){
+  const data=LS.get('pm_inbound');
+  const skuOpts=getAllSKU().map(s=>`<option value="${s.id}">${s.id} · ${esc(s.nama)}</option>`).join('');
+  const stok=LS.obj('pm_stok');
+
+  g('pg-inbound').innerHTML=`
+  <div class="banner ban-pr"><span class="ban-ico">📥</span><span><b>Cara pakai.</b> Pilih SKU, isi jumlah dan tanggal terima. Garansi 30 hari dihitung otomatis.</span></div>
+
+  <div class="card" style="padding:26px;margin-bottom:18px">
+    <div style="font-size:15px;font-weight:800;margin-bottom:3px;font-family:'Plus Jakarta Sans',sans-serif">📋 Form Penerimaan Barang</div>
+    <div style="font-size:12px;color:var(--txM);margin-bottom:18px">Isi semua field bertanda bintang merah</div>
+    <div class="g2">
+      <div class="s2 fwrap">
+        <label class="flbl">SKU dan Nama Barang <span style="color:var(--rd)">*</span></label>
+        <select id="in-sku" class="fsel"><option value="">— Pilih dari 50 SKU —</option>${skuOpts}</select>
+      </div>
+      <div class="fwrap"><label class="flbl">Jumlah Unit Masuk <span style="color:var(--rd)">*</span></label><input id="in-qty" type="number" class="finp" value="1" min="1"></div>
+      <div class="fwrap"><label class="flbl">Tanggal Datang <span style="color:var(--rd)">*</span></label><input id="in-tgl" type="date" class="finp" value="${today()}"></div>
+      <div class="fwrap">
+        <label class="flbl">Harga Beli per Unit <span style="color:var(--rd)">*</span></label>
+        <input id="in-hbeli" type="number" class="finp" placeholder="Otomatis dari data SKU" min="0">
+        <div class="fhint">Harga beli dari supplier. Default dari data master.</div>
+      </div>
+      <div class="fwrap">
+        <label class="flbl">Harga Jual per Unit <span style="color:var(--rd)">*</span></label>
+        <input id="in-hjual" type="number" class="finp" placeholder="Default +25% dari harga beli" min="0">
+        <div class="fhint">Harga yang Anda kenakan ke pelanggan.</div>
+      </div>
+      <div class="s2 fwrap">
+        <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px">
+          <input type="checkbox" id="in-ket-check" style="width:16px;height:16px;cursor:pointer;accent-color:var(--rd)">
+          <label for="in-ket-check" style="font-size:13px;font-weight:600;color:var(--tx);cursor:pointer">Ada keterangan masalah pada barang ini?</label>
+        </div>
+        <div id="in-ket-wrap" style="display:none">
+          <input id="in-ket" class="finp" placeholder="Contoh: kemasan penyok, ada cacat pada produk, warna tidak sesuai...">
+          <div class="fhint">Keterangan akan muncul di tabel alert garansi dan bisa dicari solusinya.</div>
+        </div>
+      </div>
+    </div>
+    <div id="in-preview"></div>
+    <div id="in-msg"></div>
+    <button class="btn btn-pr btn-md" style="margin-top:14px" id="btn-simpan-inbound">💾 Simpan ke Database</button>
+  </div>
+
+  <div class="toolbar">
+    <div><div class="tb-title">📦 Riwayat Barang Masuk</div><div class="tb-sub">${data.length} record tersimpan</div></div>
+    <div class="tb-actions"><button class="btn btn-gn btn-sm" id="btn-exp-inbound">⬇ CSV</button></div>
+  </div>
+
+  <div class="twrap"><div class="tscroll">
+    ${data.length===0?`<div class="tempty">📭<br>Belum ada data.</div>`:`
+    <table><thead><tr>
+      <th>SKU</th><th>Nama Barang</th><th style="text-align:center">Qty</th>
+      <th>Harga Beli</th><th>Harga Jual</th><th style="color:var(--gn)">Untung/unit</th>
+      <th>Tgl Masuk</th><th>Batas Garansi</th><th>Masalah</th>
+      <th style="color:var(--bl)">Dicatat Oleh</th><th>Aksi</th>
+    </tr></thead>
+    <tbody>
+      ${data.slice().reverse().map(d=>{
+        const hb=d.hargaBeli||d.harga||0;
+        const hj=d.hargaJual||getHargaJual(d.sku);
+        const untung=hj-hb;
+        return`<tr>
+          <td style="font-weight:700;color:var(--prD)">${esc(d.sku)}</td>
+          <td>${esc(d.nama)}</td>
+          <td style="text-align:center;font-weight:700">${d.jumlah}</td>
+          <td style="font-size:12px">${fmtRp(hb)}</td>
+          <td style="font-size:12px;color:var(--bl);font-weight:700">${fmtRp(hj)}</td>
+          <td style="font-size:12px;font-weight:700;color:${untung>0?'var(--gn)':'var(--rd)'}">${untung>0?'+':''}${fmtRp(untung)}</td>
+          <td>${d.datang}</td>
+          <td>${d.expiry}</td>
+          <td style="font-size:11px;color:${d.keterangan?'var(--rd)':'var(--txM)'}">
+            ${d.keterangan?`<span title="${esc(d.keterangan)}">⚠️ ${d.keterangan.length>20?d.keterangan.slice(0,18)+'…':esc(d.keterangan)}</span>`:'—'}
+          </td>
+          <td style="font-size:11px">
+            <div style="font-weight:700;color:var(--bl)">${esc(d.namaInput||d.inputOleh||'—')}</div>
+            <div style="color:var(--txM);text-transform:capitalize">${d.roleInput||''}</div>
+            ${d.waktuInput?`<div style="color:var(--txD);font-size:10px">${new Date(d.waktuInput).toLocaleString('id-ID',{day:'2-digit',month:'short',hour:'2-digit',minute:'2-digit'})}</div>`:''}
+          </td>
+          <td style="white-space:nowrap">
+            <button class="btn btn-yw btn-sm" data-id="${d.id}" data-action="edit-inbound" style="margin-right:5px">✏️</button>
+            <button class="btn btn-rd btn-sm" data-id="${d.id}" data-action="del-inbound">🗑️</button>
+          </td>
+        </tr>`}).join('')}
+    </tbody></table>`}
+  </div></div>`;
+
+  // events
+  g('in-sku').addEventListener('change',()=>{
+    const m=SKU.find(s=>s.id===g('in-sku').value);
+    if(m){
+      g('in-hbeli').value=m.harga;
+      g('in-hjual').value=getHargaJual(m.id);
+    } else {
+      g('in-hbeli').value='';g('in-hjual').value='';
+    }
+    updateInPreview();
+  });
+  g('in-qty').addEventListener('input', updateInPreview);
+  g('in-tgl').addEventListener('input', updateInPreview);
+  g('in-hbeli').addEventListener('input', updateInPreview);
+  g('in-hjual').addEventListener('input', updateInPreview);
+  g('in-ket-check').addEventListener('change',()=>{
+    g('in-ket-wrap').style.display=g('in-ket-check').checked?'block':'none';
+  });
+
+  g('btn-simpan-inbound').addEventListener('click',()=>{
+    const skuId=g('in-sku').value, qty=+g('in-qty').value, tgl=g('in-tgl').value;
+    const hbeli=+g('in-hbeli').value||0, hjual=+g('in-hjual').value||0;
+    const adaMasalah=g('in-ket-check').checked;
+    const ket=adaMasalah?(g('in-ket')?.value||''):'';
+    if(!skuId||qty<1){showMsg('in-msg','Pilih SKU dan isi jumlah terlebih dahulu.',false);return}
+    const m=getAllSKU().find(s=>s.id===skuId);
+    // simpan harga jual ke pm_hargajual agar konsisten
+    if(hjual>0){const hj=LS.obj('pm_hargajual');hj[skuId]=hjual;LS.set('pm_hargajual',hj)}
+    const entry={
+      id:Date.now(),sku:skuId,nama:m.nama,harga:m.harga,
+      hargaBeli:hbeli||m.harga,hargaJual:hjual||getHargaJual(skuId),
+      jumlah:qty,datang:tgl,expiry:addDays(tgl,30),keterangan:ket,
+      inputOleh:APP.user?.username||'—',
+      namaInput:APP.user?.nama||'—',
+      roleInput:APP.user?.role||'—',
+      waktuInput:new Date().toISOString()
+    };
+    LS.set('pm_inbound',[...LS.get('pm_inbound'),entry]);
+    LS.set('pm_garansi',[...LS.get('pm_garansi'),entry]);
+    logActivity('INBOUND',`Tambah ${qty} unit ${m.nama} (${skuId})`);
+    const stok=LS.obj('pm_stok');stok[skuId]=(stok[skuId]||0)+qty;LS.set('pm_stok',stok);
+    showMsg('in-msg',`${m.nama} (${qty} unit) berhasil dicatat. Garansi hingga ${entry.expiry}.`,true);
+    setTimeout(()=>renderInbound(),900);
+  });
+
+  g('btn-exp-inbound').addEventListener('click',()=>{
+    exportCSV(LS.get('pm_inbound').map(d=>[d.sku,d.nama,d.jumlah,d.datang,d.expiry,d.keterangan||'']),['SKU','Nama','Qty','Tgl Masuk','Batas','Keterangan'],'inbound.csv');
+  });
+
+  g('pg-inbound').querySelectorAll('[data-action="del-inbound"]').forEach(btn=>{
+    btn.addEventListener('click',()=>{
+      const tid=btn.dataset.id;
+      openConfirm('Hapus record barang masuk ini?', ()=>{
+        const d=LS.get('pm_inbound').find(x=>String(x.id)===tid);
+        LS.set('pm_inbound',LS.get('pm_inbound').filter(x=>String(x.id)!==tid));
+        LS.set('pm_garansi',LS.get('pm_garansi').filter(x=>String(x.id)!==tid));
+        if(d){const stok=LS.obj('pm_stok');stok[d.sku]=Math.max(0,(stok[d.sku]||0)-d.jumlah);LS.set('pm_stok',stok)}
+        renderInbound();
+      });
+    });
+  });
+
+  g('pg-inbound').querySelectorAll('[data-action="edit-inbound"]').forEach(btn=>{
+    btn.addEventListener('click',()=>{
+      const tid=btn.dataset.id;
+      const row=LS.get('pm_inbound').find(x=>String(x.id)===tid);
+      if(!row) return;
+      openModal(`
+        <div class="mhdr"><div class="mtitle">✏️ Edit Barang Masuk</div><button class="mclose" id="mc">✕</button></div>
+        <div class="fwrap"><label class="flbl">Jumlah Unit</label><input id="ei-qty" type="number" class="finp" value="${row.jumlah}" min="1"></div>
+        <div class="fwrap"><label class="flbl">Tanggal Masuk</label><input id="ei-tgl" type="date" class="finp" value="${row.datang}"></div>
+        <div class="fwrap"><label class="flbl">Keterangan</label><input id="ei-ket" class="finp" value="${esc(row.keterangan||'')}"></div>
+        <div style="display:flex;gap:9px;margin-top:4px">
+          <button class="btn btn-pr btn-lg" style="flex:1;justify-content:center" id="ei-save">💾 Simpan</button>
+          <button class="btn btn-gh btn-lg" style="flex:1;justify-content:center" id="mc2">Batal</button>
+        </div>
+      `);
+      g('mc').onclick=g('mc2').onclick=closeModal;
+      g('ei-save').onclick=()=>{
+        const newQty=+g('ei-qty').value, newTgl=g('ei-tgl').value, newKet=g('ei-ket').value;
+        const diff=newQty-row.jumlah;
+        const updated={...row,jumlah:newQty,datang:newTgl,expiry:addDays(newTgl,30),keterangan:newKet};
+        LS.set('pm_inbound',LS.get('pm_inbound').map(x=>String(x.id)===tid?updated:x));
+        LS.set('pm_garansi',LS.get('pm_garansi').map(x=>String(x.id)===tid?updated:x));
+        const stok=LS.obj('pm_stok');stok[row.sku]=(stok[row.sku]||0)+diff;LS.set('pm_stok',stok);
+        closeModal();renderInbound();
+      };
+    });
+  });
+}
+
+function updateInPreview(){
+  const skuId=g('in-sku')?.value; if(!skuId){if(g('in-preview'))g('in-preview').innerHTML='';return}
+  const m=SKU.find(s=>s.id===skuId);
+  if(!m)return;
+  const qty=+(g('in-qty')?.value||1), tgl=g('in-tgl')?.value||today();
+  const hbeli=+(g('in-hbeli')?.value||m.harga);
+  const hjual=+(g('in-hjual')?.value||getHargaJual(skuId));
+  const stok=LS.obj('pm_stok');
+  const untungPerUnit=hjual-hbeli;
+  const untungTotal=untungPerUnit*qty;
+  g('in-preview').innerHTML=`<div style="margin-top:10px;padding:14px 18px;background:var(--prBg);border:1px solid var(--prBr);border-radius:12px">
+    <div style="font-size:13px;font-weight:700;color:var(--prD);margin-bottom:10px">${esc(m.nama)} · ${m.id}</div>
+    <div style="display:flex;gap:14px;flex-wrap:wrap;font-size:12px">
+      <div style="padding:8px 12px;background:#fff;border-radius:8px;border:1px solid var(--bd)">
+        <div style="color:var(--txM);margin-bottom:2px">Stok saat ini</div>
+        <div style="font-weight:800;font-size:16px;color:${(stok[m.id]||0)===0?'var(--txM)':'var(--gn)'}">${stok[m.id]||0} unit</div>
+      </div>
+      <div style="padding:8px 12px;background:#fff;border-radius:8px;border:1px solid var(--bd)">
+        <div style="color:var(--txM);margin-bottom:2px">Harga Beli/unit</div>
+        <div style="font-weight:700;color:var(--rd)">${fmtRp(hbeli)}</div>
+      </div>
+      <div style="padding:8px 12px;background:#fff;border-radius:8px;border:1px solid var(--bd)">
+        <div style="color:var(--txM);margin-bottom:2px">Harga Jual/unit</div>
+        <div style="font-weight:700;color:var(--bl)">${fmtRp(hjual)}</div>
+      </div>
+      <div style="padding:8px 12px;background:${untungPerUnit>0?'var(--gnB)':'var(--rdB)'};border-radius:8px;border:1px solid ${untungPerUnit>0?'var(--gnBr)':'var(--rdBr)'}">
+        <div style="color:var(--txM);margin-bottom:2px">Untung/unit</div>
+        <div style="font-weight:800;color:${untungPerUnit>0?'var(--gn)':'var(--rd)'}">${untungPerUnit>0?'+':''}${fmtRp(untungPerUnit)}</div>
+      </div>
+      <div style="padding:8px 12px;background:${untungTotal>0?'var(--gnB)':'var(--rdB)'};border-radius:8px;border:1px solid ${untungTotal>0?'var(--gnBr)':'var(--rdBr)'}">
+        <div style="color:var(--txM);margin-bottom:2px">Total Untung (${qty} unit)</div>
+        <div style="font-weight:800;font-size:14px;color:${untungTotal>0?'var(--gn)':'var(--rd)'}">${untungTotal>0?'+':''}${fmtRp(untungTotal)}</div>
+      </div>
+      <div style="padding:8px 12px;background:#fff;border-radius:8px;border:1px solid var(--bd)">
+        <div style="color:var(--txM);margin-bottom:2px">Garansi hingga</div>
+        <div style="font-weight:700;color:var(--tx)">${addDays(tgl,30)}</div>
+      </div>
+    </div>
+  </div>`;
+}
+
+/* ============================================================
+   OUTBOUND
+   ============================================================ */
+function renderOutbound(){
+  const semuaPenjualan=LS.get('pm_penjualan');
+  const bulanOpts=()=>{const set=new Set(semuaPenjualan.map(d=>d.tanggal.slice(0,7)));return['semua',...Array.from(set).sort().reverse()];};
+  const data=APP.outBulan==='semua'?semuaPenjualan:semuaPenjualan.filter(d=>d.tanggal.startsWith(APP.outBulan));
+  const omzet=data.reduce((s,d)=>s+d.total,0);
+  const namaBulan=b=>{if(b==='semua')return'Semua Bulan';try{const[y,m]=b.split('-');return new Date(+y,+m-1,1).toLocaleDateString('id-ID',{month:'long',year:'numeric'});}catch{return b}};
+  const skuOpts=getAllSKU().map(s=>`<option value="${s.id}">${s.id} · ${esc(s.nama)}</option>`).join('');
+
+  g('pg-outbound').innerHTML=`
+  <div class="banner ban-pr"><span class="ban-ico">📤</span><span><b>Cara pakai.</b> Pilih SKU, isi jumlah dan kanal. Stok berkurang otomatis. Data masuk ke perhitungan ABC dan SBA.</span></div>
+
+  <div class="card" style="padding:26px;margin-bottom:18px">
+    <div style="font-size:15px;font-weight:800;margin-bottom:3px;font-family:'Plus Jakarta Sans',sans-serif">📋 Form Pencatatan Penjualan</div>
+    <div style="font-size:12px;color:var(--txM);margin-bottom:18px">Catat setiap transaksi untuk akurasi peramalan</div>
+    <div class="g2">
+      <div class="s2 fwrap">
+        <label class="flbl">SKU dan Nama Barang <span style="color:var(--rd)">*</span></label>
+        <select id="out-sku" class="fsel"><option value="">— Pilih dari 50 SKU —</option>${skuOpts}</select>
+      </div>
+      <div class="fwrap"><label class="flbl">Jumlah Terjual <span style="color:var(--rd)">*</span></label><input id="out-qty" type="number" class="finp" value="1" min="1"></div>
+      <div class="fwrap"><label class="flbl">Kanal Penjualan</label><select id="out-kanal" class="fsel"><option>Offline</option><option>Lazada</option></select></div>
+      <div class="fwrap"><label class="flbl">Tanggal</label><input id="out-tgl" type="date" class="finp" value="${today()}"></div>
+    </div>
+    <div id="out-preview"></div>
+    <div id="out-msg"></div>
+    <button class="btn btn-pr btn-md" style="margin-top:14px" id="btn-simpan-out">💾 Simpan Penjualan</button>
+  </div>
+
+  <div class="fr" style="margin-bottom:16px">
+    <div style="flex:1;min-width:160px;padding:14px 18px;background:var(--gnB);border:1px solid var(--gnBr);border-radius:12px">
+      <div style="font-size:10px;color:var(--gn);font-weight:700;text-transform:uppercase;letter-spacing:0.8px">Total Omzet</div>
+      <div style="font-size:22px;font-weight:800;margin-top:3px">${fmtRp(omzet)}</div>
+    </div>
+    <div style="flex:1;min-width:160px;padding:14px 18px;background:var(--blB);border:1px solid var(--blBr);border-radius:12px">
+      <div style="font-size:10px;color:var(--bl);font-weight:700;text-transform:uppercase;letter-spacing:0.8px">Total Transaksi</div>
+      <div style="font-size:22px;font-weight:800;margin-top:3px">${data.length}</div>
+    </div>
+  </div>
+
+  <div class="toolbar">
+    <div>
+      <div class="tb-title">🧾 Riwayat Penjualan</div>
+      <div class="tb-sub">${data.length} transaksi · ${namaBulan(APP.outBulan)}</div>
+    </div>
+    <div class="tb-actions" style="flex-wrap:wrap;gap:6px">
+      <select id="sel-bulan-out" class="fsel" style="width:auto;padding:5px 10px;font-size:12px">
+        ${bulanOpts().map(b=>`<option value="${b}" ${APP.outBulan===b?'selected':''}>${namaBulan(b)}</option>`).join('')}
+      </select>
+      <button class="btn btn-gn btn-sm" id="btn-exp-out">⬇ CSV</button>
+      <button class="btn btn-bl btn-sm" id="btn-exp-out-xl">📊 Excel</button>
+      <button class="btn btn-gh btn-sm" id="btn-exp-out-pdf">🖨 PDF</button>
+    </div>
+  </div>
+
+  <div class="twrap"><div class="tscroll">
+    ${data.length===0?`<div class="tempty">📭<br>Belum ada transaksi.</div>`:`
+    <table><thead><tr><th>SKU</th><th>Nama</th><th style="text-align:center">Qty</th><th>Kanal</th><th>Tanggal</th><th>Total</th><th style="color:var(--bl)">Dicatat Oleh</th><th>Aksi</th></tr></thead>
+    <tbody>
+      ${data.slice().reverse().map(d=>`
+        <tr>
+          <td style="font-weight:700;color:var(--prD)">${esc(d.sku)}</td>
+          <td>${esc(d.nama)}</td>
+          <td style="text-align:center">${d.jumlah}</td>
+          <td><span class="badge ${d.kanal==='Lazada'?'':'ba'}" style="${d.kanal==='Lazada'?'background:#fff0e6;color:#cc4400;border:1px solid #ffc9a8':''}">${d.kanal}</span></td>
+          <td>${d.tanggal}</td>
+          <td style="font-weight:700;color:var(--gn)">${fmtRp(d.total)}</td>
+          <td style="font-size:11px">
+            <div style="font-weight:700;color:var(--bl)">${esc(d.namaInput||d.inputOleh||'—')}</div>
+            <div style="color:var(--txM);text-transform:capitalize">${d.roleInput||''}</div>
+            ${d.waktuInput?`<div style="color:var(--txD);font-size:10px">${new Date(d.waktuInput).toLocaleString('id-ID',{day:'2-digit',month:'short',hour:'2-digit',minute:'2-digit'})}</div>`:''}
+          </td>
+          <td style="white-space:nowrap">
+            <button class="btn btn-yw btn-sm" data-id="${d.id}" data-action="edit-out" style="margin-right:5px">✏️ Edit</button>
+            <button class="btn btn-rd btn-sm" data-id="${d.id}" data-action="del-out">🗑️ Hapus</button>
+          </td>
+        </tr>`).join('')}
+    </tbody></table>`}
+  </div></div>`;
+
+  // events
+  g('out-sku').addEventListener('change', updateOutPreview);
+  g('out-qty').addEventListener('input', updateOutPreview);
+
+  g('btn-simpan-out').addEventListener('click',()=>{
+    const skuId=g('out-sku').value, qty=+g('out-qty').value, kanal=g('out-kanal').value, tgl=g('out-tgl').value;
+    if(!skuId||qty<1){showMsg('out-msg','Pilih SKU dan isi jumlah.',false);return}
+    const stok=LS.obj('pm_stok'), ada=stok[skuId]||0;
+    if(qty>ada){showMsg('out-msg',`Stok tidak cukup. Tersedia ${ada} unit.`,false);return}
+    const m=getAllSKU().find(s=>s.id===skuId);
+    const entry={
+      id:Date.now(),sku:skuId,nama:m.nama,harga:m.harga,
+      jumlah:qty,kanal,tanggal:tgl,total:qty*m.harga,
+      inputOleh:APP.user?.username||'—',
+      namaInput:APP.user?.nama||'—',
+      roleInput:APP.user?.role||'—',
+      waktuInput:new Date().toISOString()
+    };
+    LS.set('pm_penjualan',[...LS.get('pm_penjualan'),entry]);
+    logActivity('PENJUALAN',`Jual ${qty} unit ${m.nama} via ${kanal} — Total ${fmtRp(qty*m.harga)}`);
+    stok[skuId]=ada-qty;LS.set('pm_stok',stok);
+    APP.abcData=null;APP.sbaData=null; // invalidate cache
+    showMsg('out-msg',`Terjual ${qty} unit ${m.nama}. Total ${fmtRp(entry.total)}.`,true);
+    setTimeout(()=>renderOutbound(),900);
+  });
+
+  g('sel-bulan-out')?.addEventListener('change',()=>{APP.outBulan=g('sel-bulan-out').value;renderOutbound()});
+  g('btn-exp-out').addEventListener('click',()=>{
+    const rows=data.map(d=>[d.sku,d.nama,d.jumlah,d.kanal,d.tanggal,fmtRp(d.total)]);
+    exportCSV(rows,['SKU','Nama','Qty','Kanal','Tanggal','Total'],'penjualan.csv');
+  });
+  g('btn-exp-out-xl')?.addEventListener('click',()=>{
+    const rows=data.map(d=>[d.sku,d.nama,d.jumlah,d.kanal,d.tanggal,fmtRp(d.total)]);
+    exportExcel(rows,['SKU','Nama Barang','Qty','Kanal','Tanggal','Total'],'Penjualan',`penjualan_${APP.outBulan}.xls`);
+  });
+  g('btn-exp-out-pdf')?.addEventListener('click',()=>{
+    const rows=data.map(d=>[d.sku,d.nama,d.jumlah,d.kanal,d.tanggal,fmtRp(d.total)]);
+    exportPDFTable(rows,['SKU','Nama Barang','Qty','Kanal','Tanggal','Total'],`Laporan Penjualan`,`${namaBulan(APP.outBulan)} · Total ${fmtRp(omzet)}`);
+  });
+
+  g('pg-outbound').querySelectorAll('[data-action="del-out"]').forEach(btn=>{
+    btn.addEventListener('click',()=>{
+      const tid=btn.dataset.id;
+      openConfirm('Hapus record penjualan ini?', ()=>{
+        const d=LS.get('pm_penjualan').find(x=>String(x.id)===tid);
+        LS.set('pm_penjualan',LS.get('pm_penjualan').filter(x=>String(x.id)!==tid));
+        if(d){const stok=LS.obj('pm_stok');stok[d.sku]=(stok[d.sku]||0)+d.jumlah;LS.set('pm_stok',stok)}
+        APP.abcData=null;APP.sbaData=null;
+        renderOutbound();
+      });
+    });
+  });
+
+  g('pg-outbound').querySelectorAll('[data-action="edit-out"]').forEach(btn=>{
+    btn.addEventListener('click',()=>{
+      const tid=btn.dataset.id;
+      const row=LS.get('pm_penjualan').find(x=>String(x.id)===tid);
+      if(!row) return;
+      const stok=LS.obj('pm_stok');
+      openModal(`
+        <div class="mhdr"><div class="mtitle">✏️ Edit Penjualan</div><button class="mclose" id="mc">✕</button></div>
+        <div class="fwrap"><label class="flbl">Jumlah</label><input id="eo-qty" type="number" class="finp" value="${row.jumlah}" min="1"></div>
+        <div class="fwrap"><label class="flbl">Kanal</label><select id="eo-kanal" class="fsel"><option${row.kanal==='Offline'?' selected':''}>Offline</option><option${row.kanal==='Lazada'?' selected':''}>Lazada</option></select></div>
+        <div class="fwrap"><label class="flbl">Tanggal</label><input id="eo-tgl" type="date" class="finp" value="${row.tanggal}"></div>
+        <div style="display:flex;gap:9px;margin-top:4px">
+          <button class="btn btn-pr btn-lg" style="flex:1;justify-content:center" id="eo-save">💾 Simpan</button>
+          <button class="btn btn-gh btn-lg" style="flex:1;justify-content:center" id="mc2">Batal</button>
+        </div>
+      `);
+      g('mc').onclick=g('mc2').onclick=closeModal;
+      g('eo-save').onclick=()=>{
+        const newQty=+g('eo-qty').value, diff=newQty-row.jumlah;
+        const h=getAllSKU().find(s=>s.id===row.sku)?.harga||0;
+        const updated={...row,jumlah:newQty,kanal:g('eo-kanal').value,tanggal:g('eo-tgl').value,total:newQty*h};
+        LS.set('pm_penjualan',LS.get('pm_penjualan').map(x=>String(x.id)===tid?updated:x));
+        stok[row.sku]=Math.max(0,(stok[row.sku]||0)-diff);LS.set('pm_stok',stok);
+        APP.abcData=null;APP.sbaData=null;
+        closeModal();renderOutbound();
+      };
+    });
+  });
+}
+
+function updateOutPreview(){
+  const skuId=g('out-sku')?.value; if(!skuId){const p=g('out-preview');if(p)p.innerHTML='';return}
+  const m=SKU.find(s=>s.id===skuId), qty=+(g('out-qty')?.value||1);
+  const stok=LS.obj('pm_stok'), ada=stok[m.id]||0;
+  g('out-preview').innerHTML=`<div style="margin-top:8px;padding:12px 16px;background:var(--prBg);border:1px solid var(--prBr);border-radius:12px;display:flex;gap:18px;flex-wrap:wrap;font-size:13px">
+    <div><b style="color:var(--prD)">${esc(m.nama)}</b><div style="font-size:11px;color:var(--txM)">${fmtRp(m.harga)}/unit</div></div>
+    <div>Stok: <b style="color:${ada<qty?'var(--rd)':'var(--gn)'}">${ada} unit</b></div>
+    <div>Estimasi total: <b style="color:var(--prD)">${fmtRp(qty*m.harga)}</b></div>
+  </div>`;
+}
+
+/* ============================================================
+   ABC PAGE
+   ============================================================ */
+function renderABC(){
+  const penjualan=LS.get('pm_penjualan');
+  // Belum ada data sama sekali — tampilkan empty state
+  if(penjualan.length===0){
+    g('pg-abc').innerHTML=`
+    <div class="card" style="padding:40px 30px;text-align:center;max-width:600px;margin:0 auto">
+      <div style="font-size:48px;margin-bottom:16px">📊</div>
+      <div style="font-size:18px;font-weight:800;color:var(--tx);margin-bottom:8px">Klasifikasi ABC belum tersedia</div>
+      <div style="font-size:13px;color:var(--txM);line-height:1.7;margin-bottom:20px">
+        Klasifikasi ABC mengelompokkan barang menjadi 3 prioritas berdasarkan nilai penjualannya.<br>
+        Data baru bisa dihitung setelah ada transaksi penjualan yang tercatat.
+      </div>
+      <div style="display:flex;gap:12px;text-align:left;margin-bottom:24px">
+        <div style="flex:1;padding:14px;background:var(--rdB);border-radius:12px;border:1px solid var(--rdBr)">
+          <div style="font-size:11px;font-weight:700;color:var(--rd);text-transform:uppercase;letter-spacing:0.8px;margin-bottom:4px">Kelas A</div>
+          <div style="font-size:13px;font-weight:700;color:var(--tx)">Barang Prioritas Tinggi</div>
+          <div style="font-size:11px;color:var(--txM);margin-top:3px">Kontrol stok ketat, jangan sampai habis</div>
+        </div>
+        <div style="flex:1;padding:14px;background:var(--ywB);border-radius:12px;border:1px solid var(--ywBr)">
+          <div style="font-size:11px;font-weight:700;color:var(--yw);text-transform:uppercase;letter-spacing:0.8px;margin-bottom:4px">Kelas B</div>
+          <div style="font-size:13px;font-weight:700;color:var(--tx)">Barang Menengah</div>
+          <div style="font-size:11px;color:var(--txM);margin-top:3px">Pantau rutin, pesan secukupnya</div>
+        </div>
+        <div style="flex:1;padding:14px;background:var(--gnB);border-radius:12px;border:1px solid var(--gnBr)">
+          <div style="font-size:11px;font-weight:700;color:var(--gn);text-transform:uppercase;letter-spacing:0.8px;margin-bottom:4px">Kelas C</div>
+          <div style="font-size:13px;font-weight:700;color:var(--tx)">Barang Jarang Laku</div>
+          <div style="font-size:11px;color:var(--txM);margin-top:3px">Stok minimal, pesan hanya saat habis</div>
+        </div>
+      </div>
+      <div class="banner ban-bl" style="text-align:left;margin-bottom:0">
+        <span class="ban-ico">📋</span>
+        <span><b>Langkah selanjutnya:</b> Catat barang masuk dari supplier lewat menu <b>Barang Masuk</b>, lalu catat setiap transaksi penjualan lewat menu <b>Penjualan</b>. Setelah ada data, kembali ke halaman ini dan klik <b>Hitung Ulang</b>.</span>
+      </div>
+    </div>`;
+    return;
+  }
+  if(!APP.abcData){ APP.abcData=calcABC(APP.abcBulan||'semua'); APP.abcTS=new Date().toLocaleString('id-ID') }
+  const data=APP.abcData;
+  const fil=APP.abcFilter||'Semua';
+  const rows=fil==='Semua'?data:data.filter(s=>s.kelas===fil);
+  const A=data.filter(s=>s.kelas==='A').length,B=data.filter(s=>s.kelas==='B').length,C=data.filter(s=>s.kelas==='C').length;
+  const sf=APP.showAbcF!==false;
+
+  g('pg-abc').innerHTML=`
+  ${(()=>{const p=LS.get('pm_penjualan');if(p.length<5)return`<div class="card" style="padding:22px;margin-bottom:18px;border:2px dashed var(--ywBr);background:var(--ywB)"><div style="display:flex;gap:14px;align-items:flex-start"><div style="font-size:28px">⚠️</div><div><div style="font-weight:800;font-size:14px;color:var(--tx);margin-bottom:5px">Data penjualan masih terlalu sedikit (${p.length} transaksi)</div><div style="font-size:13px;color:var(--txM);line-height:1.6">Klasifikasi ABC baru bermakna setelah ada minimal 10–20 transaksi penjualan yang tercatat. Silakan catat transaksi lebih banyak lewat menu <b>Penjualan</b> terlebih dahulu, lalu kembali ke halaman ini dan klik <b>Hitung Ulang</b>.</div></div></div></div>`;return'';})()}
+  <div class="banner ban-bl"><span class="ban-ico">ℹ️</span><span><b>Apa itu Klasifikasi ABC?</b> Sistem mengelompokkan 50 barang berdasarkan nilai penjualan. Barang <b>Kelas A</b> = paling laris dan bernilai tinggi, prioritas utama stok. <b>Kelas B</b> = menengah. <b>Kelas C</b> = jarang laku. Klik <b>Hitung Ulang</b> setiap bulan agar klasifikasi selalu akurat.</span></div>
+
+  <div class="card" style="padding:24px;margin-bottom:18px">
+    <div style="display:flex;justify-content:space-between;align-items:center;${sf?'margin-bottom:16px':''}">
+      <div><div style="font-size:14px;font-weight:800;font-family:'Plus Jakarta Sans',sans-serif">📐 Rumus Klasifikasi ABC</div><div style="font-size:12px;color:var(--txM);margin-top:2px">Pareto 80/20 dimodifikasi</div></div>
+      <button class="btn btn-gh btn-sm" id="btn-toggle-abcf">${sf?'Sembunyikan':'Tampilkan'} Rumus</button>
+    </div>
+    ${sf?`<div class="g2">
+      <div class="fbox fbox-bl"><div class="flabel flabel-bl">Langkah 1 — Total Demand</div><div class="fmath">Total Demand = D<sub>base</sub> + D<sub>aktual</sub></div><div class="fnote">D<sub>base</sub> = 12 minggu Excel. D<sub>aktual</sub> = transaksi penjualan baru.</div></div>
+      <div class="fbox fbox-pr"><div class="flabel flabel-pr">Langkah 2 — ACV</div><div class="fmath">ACV = Total Demand × Harga Satuan</div><div class="fnote">Annual Consumption Value: nilai uang yang berputar untuk SKU itu.</div></div>
+      <div class="fbox fbox-pu"><div class="flabel flabel-pu">Langkah 3 — Persen Kumulatif</div><div class="fmath">% Kum = Σ ACV terurut / Total ACV</div><div class="fnote">Urutkan SKU dari ACV terbesar ke terkecil, hitung persen kumulatif tiap baris.</div></div>
+      <div class="fbox fbox-gn"><div class="flabel flabel-gn">Langkah 4 — Kelas</div><div class="fmath">A: % Kum ≤ 79.7%<br>B: 79.7% &lt; % Kum ≤ 93.9%<br>C: % Kum &gt; 93.9%</div><div class="fnote">Batas sesuai sheet identifikasi ABC di file Excel.</div></div>
+    </div>
+    <div style="background:#fff8ec;border:1px dashed var(--prBr);border-radius:12px;padding:12px 16px;font-size:12px;line-height:1.7;margin-top:4px"><b style="color:var(--prD)">📌 Cara membaca:</b> Kelas A = paling bernilai, kontrol ketat. Kelas B = sedang. Kelas C = minimal.</div>`:''}
+  </div>
+
+  <div class="toolbar">
+    <div>
+      <div class="tb-title">📊 Hasil Klasifikasi 50 SKU</div>
+      <div class="tb-sub">Periode: <b>${APP.abcBulan==='semua'?'Semua waktu':new Date(APP.abcBulan+'-01').toLocaleDateString('id-ID',{month:'long',year:'numeric'})}</b> · Dihitung: ${APP.abcTS||'—'}</div>
+    </div>
+    <div class="tb-actions" style="flex-wrap:wrap;gap:6px">
+      <select id="sel-bulan-abc" class="fsel" style="width:auto;padding:5px 10px;font-size:12px">
+        ${(()=>{const p=LS.get('pm_penjualan');const set=new Set(p.map(d=>d.tanggal.slice(0,7)));const opts=['semua',...Array.from(set).sort().reverse()];return opts.map(b=>`<option value="${b}" ${APP.abcBulan===b?'selected':''}>${b==='semua'?'Semua Waktu':new Date(b+'-01').toLocaleDateString('id-ID',{month:'long',year:'numeric'})}</option>`).join('')})()}
+      </select>
+      <button class="btn btn-bl btn-sm" id="btn-hitung-abc">🔄 Hitung Ulang</button>
+      <button class="btn btn-gn btn-sm" id="btn-exp-abc">⬇ CSV</button>
+      <button class="btn btn-bl btn-sm" id="btn-exp-abc-xl">📊 Excel</button>
+      <button class="btn btn-gh btn-sm" id="btn-exp-abc-pdf">🖨 PDF</button>
+    </div>
+  </div>
+
+  <div class="fp-wrap">
+    <button class="fp ${fil==='Semua'?'on-all':''}" data-fil="Semua"><div class="fp-lbl" style="color:${fil==='Semua'?'var(--prD)':'var(--tx)'}">Semua (${data.length})</div></button>
+    <button class="fp ${fil==='A'?'on-A':''}" data-fil="A"><div class="fp-lbl" style="color:${fil==='A'?'var(--rd)':'var(--tx)'}">Kelas A (${A})</div><div class="fp-sub">High Value · Kontrol Ketat</div></button>
+    <button class="fp ${fil==='B'?'on-B':''}" data-fil="B"><div class="fp-lbl" style="color:${fil==='B'?'var(--yw)':'var(--tx)'}">Kelas B (${B})</div><div class="fp-sub">Medium Value · Kontrol Sedang</div></button>
+    <button class="fp ${fil==='C'?'on-C':''}" data-fil="C"><div class="fp-lbl" style="color:${fil==='C'?'var(--gn)':'var(--tx)'}">Kelas C (${C})</div><div class="fp-sub">Low Value · Kontrol Minimal</div></button>
+  </div>
+
+  <div class="twrap"><div class="tscroll">
+    <table><thead><tr>
+      <th>#</th>
+      <th>SKU ID</th>
+      <th>Nama Barang</th>
+      <th title="Harga satuan barang">Harga Satuan</th>
+      <th title="Total unit terjual yang tercatat di sistem">Total Terjual</th>
+      <th title="ACV = Total Terjual × Harga. Semakin besar nilainya, semakin penting barang ini.">ACV (Nilai Konsumsi)</th>
+      <th style="min-width:150px" title="Persentase kumulatif ACV dari semua barang yang diurutkan">% Kumulatif</th>
+      <th title="A = top 79.7% nilai. B = 79.7–93.9%. C = sisanya.">Kelas</th>
+    </tr></thead>
+    <tbody>
+      ${rows.map(s=>`
+        <tr>
+          <td style="color:var(--txM);font-weight:600;text-align:center">${s.rank}</td>
+          <td style="font-weight:700;color:var(--prD)">${s.id}</td>
+          <td>${esc(s.nama)}</td>
+          <td>${fmtRp(s.harga)}</td>
+          <td style="text-align:center">
+            <div style="font-weight:700">${s.totalDemand.toLocaleString('id-ID')} unit</div>
+            ${s.totalDemand===0?`<div style="font-size:10px;color:var(--txD)">belum ada penjualan</div>`:`<div style="font-size:10px;color:var(--txD)">dari transaksi tercatat</div>`}
+          </td>
+          <td style="font-weight:700">${fmtRp(s.acv)}</td>
+          <td><div class="pbar"><div class="pfill" style="width:${(s.pk*100).toFixed(1)}%;background:${s.kelas==='A'?'var(--rd)':s.kelas==='B'?'var(--yw)':'var(--gn)'}"></div></div><div style="font-size:11px;color:var(--txM);font-weight:600">${(s.pk*100).toFixed(2)}%</div></td>
+          <td><span class="badge b${s.kelas.toLowerCase()}">${s.kelas}</span></td>
+        </tr>`).join('')}
+    </tbody></table>
+  </div></div>`;
+
+  // events — MUST attach after innerHTML
+  g('btn-toggle-abcf').addEventListener('click',()=>{APP.showAbcF=!APP.showAbcF;renderABC()});
+  g('sel-bulan-abc')?.addEventListener('change',()=>{APP.abcBulan=g('sel-bulan-abc').value;APP.abcData=calcABC(APP.abcBulan);APP.abcTS=new Date().toLocaleString('id-ID');renderABC()});
+  g('btn-hitung-abc').addEventListener('click',()=>{
+    APP.abcData=calcABC(APP.abcBulan||'semua');
+    APP.abcTS=new Date().toLocaleString('id-ID');
+    renderABC();
+  });
+  g('btn-exp-abc').addEventListener('click',()=>{
+    const rows=APP.abcData.map(s=>[s.id,s.nama,fmtRp(s.harga),s.totalDemand+' unit',fmtRp(s.acv),(s.pk*100).toFixed(2)+'%',s.kelas]);
+    exportCSV(rows,['SKU','Nama','Harga','Total Terjual','ACV','% Kumulatif','Kelas'],'abc.csv');
+  });
+  g('btn-exp-abc-xl')?.addEventListener('click',()=>{
+    const rows=APP.abcData.map(s=>[s.id,s.nama,fmtRp(s.harga),s.totalDemand,fmtRp(s.acv),(s.pk*100).toFixed(2)+'%',s.kelas]);
+    exportExcel(rows,['SKU','Nama Barang','Harga Satuan','Total Terjual','ACV','% Kumulatif','Kelas'],'Klasifikasi ABC','klasifikasi_abc.xls');
+  });
+  g('btn-exp-abc-pdf')?.addEventListener('click',()=>{
+    const rows=APP.abcData.map(s=>[s.rank,s.id,s.nama,fmtRp(s.harga),s.totalDemand,fmtRp(s.acv),(s.pk*100).toFixed(2)+'%',s.kelas]);
+    exportPDFTable(rows,['#','SKU','Nama Barang','Harga','Total Terjual','ACV','% Kumulatif','Kelas'],'Klasifikasi ABC',`Update: ${APP.abcTS||'—'}`);
+  });
+  g('pg-abc').querySelectorAll('.fp').forEach(btn=>{
+    btn.addEventListener('click',()=>{APP.abcFilter=btn.dataset.fil;renderABC()});
+  });
+}
+
+/* ============================================================
+   REKOMENDASI
+   ============================================================ */
+function renderRekomendasi(){
+  const penjualan=LS.get('pm_penjualan');
+  const inbound=LS.get('pm_inbound');
+  // Belum ada data sama sekali
+  if(penjualan.length===0&&inbound.length===0){
+    g('pg-rekomendasi').innerHTML=`
+    <div class="card" style="padding:40px 30px;text-align:center;max-width:600px;margin:0 auto">
+      <div style="font-size:48px;margin-bottom:16px">🎯</div>
+      <div style="font-size:18px;font-weight:800;color:var(--tx);margin-bottom:8px">Rekomendasi Pemesanan belum tersedia</div>
+      <div style="font-size:13px;color:var(--txM);line-height:1.7;margin-bottom:20px">
+        Halaman ini menghitung kapan dan berapa banyak harus memesan ulang untuk 10 barang dengan permintaan tidak teratur.<br>
+        Data baru bisa dihitung setelah ada transaksi penjualan.
+      </div>
+      <div style="display:flex;gap:12px;text-align:left;margin-bottom:24px;flex-wrap:wrap">
+        <div style="flex:1;min-width:150px;padding:14px;background:var(--prBg);border-radius:12px;border:1px solid var(--prBr)">
+          <div style="font-size:20px;margin-bottom:6px">🛒</div>
+          <div style="font-size:12px;font-weight:800;color:var(--prD)">EOQ</div>
+          <div style="font-size:11px;color:var(--txM);margin-top:2px">Berapa unit yang harus dipesan sekali pesan agar paling hemat biaya</div>
+        </div>
+        <div style="flex:1;min-width:150px;padding:14px;background:var(--ywB);border-radius:12px;border:1px solid var(--ywBr)">
+          <div style="font-size:20px;margin-bottom:6px">📍</div>
+          <div style="font-size:12px;font-weight:800;color:var(--yw)">ROP</div>
+          <div style="font-size:11px;color:var(--txM);margin-top:2px">Batas stok minimum — jika stok sudah di angka ini, segera pesan ulang</div>
+        </div>
+        <div style="flex:1;min-width:150px;padding:14px;background:var(--puB);border-radius:12px;border:1px solid var(--puBr)">
+          <div style="font-size:20px;margin-bottom:6px">🛡️</div>
+          <div style="font-size:12px;font-weight:800;color:var(--pu)">Safety Stock</div>
+          <div style="font-size:11px;color:var(--txM);margin-top:2px">Stok cadangan untuk jaga-jaga jika terjadi lonjakan permintaan mendadak</div>
+        </div>
+      </div>
+      <div class="banner ban-bl" style="text-align:left;margin-bottom:0">
+        <span class="ban-ico">📋</span>
+        <span><b>Langkah selanjutnya:</b> Catat barang masuk lewat menu <b>Barang Masuk</b>, lalu catat penjualan lewat menu <b>Penjualan</b>. Setelah ada data transaksi, kembali ke sini dan klik <b>Hitung Ulang</b>.</span>
+      </div>
+    </div>`;
+    return;
+  }
+  if(!APP.sbaData){ APP.sbaData=calcSBA(APP.rekBulan||'semua'); APP.sbaTS=new Date().toLocaleString('id-ID') }
+  const data=APP.sbaData;
+  const stok=LS.obj('pm_stok');
+  const sf=APP.showRekF!==false;
+
+  g('pg-rekomendasi').innerHTML=`
+  ${(()=>{const p=LS.get('pm_penjualan');const adaData=p.some(x=>['SP-037','SP-038','SP-039','SP-040','SP-042','SP-043','SP-044','SP-047','SP-049','SP-050'].includes(x.sku));if(!adaData)return`<div class="card" style="padding:22px;margin-bottom:18px;border:2px dashed var(--ywBr);background:var(--ywB)"><div style="display:flex;gap:14px;align-items:flex-start"><div style="font-size:28px">⚠️</div><div><div style="font-weight:800;font-size:14px;color:var(--tx);margin-bottom:5px">Belum ada data penjualan untuk SKU Intermittent</div><div style="font-size:13px;color:var(--txM);line-height:1.6">Halaman ini menghitung rekomendasi untuk 10 barang yang permintaannya tidak teratur (jarang dibeli). Perhitungan baru bisa dilakukan setelah ada transaksi penjualan untuk barang-barang tersebut. Catat penjualan lewat menu <b>Penjualan</b> terlebih dahulu.</div></div></div></div>`;return'';})()}
+  <div class="banner ban-bl"><span class="ban-ico">ℹ️</span><span><b>Apa itu halaman Rekomendasi?</b> Sistem menghitung berapa unit harus dipesan dan kapan harus pesan untuk 10 barang dengan permintaan tidak teratur. Klik <b>Hitung Ulang</b> setiap 2 minggu. Klik <b>Detail</b> di tiap baris untuk lihat langkah perhitungannya.</span></div>
+
+  <div class="card" style="padding:24px;margin-bottom:18px">
+    <div style="display:flex;justify-content:space-between;align-items:center;${sf?'margin-bottom:16px':''}">
+      <div><div style="font-size:14px;font-weight:800;font-family:'Plus Jakarta Sans',sans-serif">📐 Rumus SBA + EOQ</div><div style="font-size:12px;color:var(--txM);margin-top:2px">Syntetos-Boylan Approximation</div></div>
+      <button class="btn btn-gh btn-sm" id="btn-toggle-rekf">${sf?'Sembunyikan':'Tampilkan'} Rumus</button>
+    </div>
+    ${sf?`<div style="background:var(--prBg);border:1px solid var(--prBr);border-radius:12px;padding:12px 16px;margin-bottom:14px">
+      <div style="font-size:10px;font-weight:700;color:var(--prD);text-transform:uppercase;letter-spacing:0.8px;margin-bottom:9px">⚙️ Parameter Tetap Sistem</div>
+      <div class="prow">
+        <div class="pi"><div class="pk">α (smoothing)</div><div class="pv">${ALPHA}</div></div>
+        <div class="pi"><div class="pk">S (ordering cost)</div><div class="pv">${fmtRp(S_COST)}</div></div>
+        <div class="pi"><div class="pk">h (holding rate)</div><div class="pv">${H_RATE*100}%/tahun</div></div>
+        <div class="pi"><div class="pk">Lead Time</div><div class="pv">${LT} minggu</div></div>
+        <div class="pi"><div class="pk">Z service level</div><div class="pv">${Z_SVC} (95%)</div></div>
+      </div>
+    </div>
+    <div class="g2">
+      <div class="fbox fbox-bl"><div class="flabel flabel-bl">Tahap 1 — Forecast SBA</div><div class="fmath">Z<sub>t</sub> = (1−α)·Z<sub>t−1</sub> + α·d<sub>t</sub><br>I<sub>t</sub> = (1−α)·I<sub>t−1</sub> + α·interval<br><div class="fhi">Forecast = Z × (1−α/2) / I</div></div><div class="fnote">Bias correction (1−α/2) mengurangi overestimate dari Croston.</div></div>
+      <div class="fbox fbox-pr"><div class="flabel flabel-pr">Tahap 2 — EOQ</div><div class="fmath">D = Forecast × 52<br>H = Harga × 25%<br><div class="fhi">EOQ = √(2·D·S / H)</div></div><div class="fnote">Jumlah pesan paling ekonomis. Minimal 1 unit.</div></div>
+      <div class="fbox fbox-pu"><div class="flabel flabel-pu">Tahap 3 — Safety Stock</div><div class="fmath">σ = CV × Forecast<br><div class="fhi">SS = ⌈Z × σ⌉</div></div><div class="fnote">Z = 1.645 untuk service level 95%.</div></div>
+      <div class="fbox fbox-gn"><div class="flabel flabel-gn">Tahap 4 — ROP</div><div class="fmath">Demand LT = Forecast × LT<br><div class="fhi">ROP = Demand LT + SS</div></div><div class="fnote">Stok ≤ ROP → SEGERA PESAN sebanyak EOQ unit.</div></div>
+    </div>`:''}
+  </div>
+
+  <div class="toolbar">
+    <div><div class="tb-title">🎯 Tabel Rekomendasi — 10 SKU Intermittent</div><div class="tb-sub">Periode: <b>${APP.rekBulan==='semua'?'Semua waktu':new Date(APP.rekBulan+'-01').toLocaleDateString('id-ID',{month:'long',year:'numeric'})}</b> · Dihitung: ${APP.sbaTS||'—'}</div></div>
+    <div class="tb-actions">
+      <select id="sel-bulan-rek" class="fsel" style="width:auto;padding:5px 10px;font-size:12px">
+        ${(()=>{const p=LS.get('pm_penjualan');const set=new Set(p.map(d=>d.tanggal.slice(0,7)));const opts=['semua',...Array.from(set).sort().reverse()];return opts.map(b=>`<option value="${b}" ${APP.rekBulan===b?'selected':''}>${b==='semua'?'Semua Waktu':new Date(b+'-01').toLocaleDateString('id-ID',{month:'long',year:'numeric'})}</option>`).join('')})()}
+      </select>
+      <button class="btn btn-bl btn-sm" id="btn-hitung-sba">🔄 Hitung Ulang</button>
+      <button class="btn btn-gn btn-sm" id="btn-exp-rek">⬇ CSV</button>
+      <button class="btn btn-bl btn-sm" id="btn-exp-rek-xl">📊 Excel</button>
+      <button class="btn btn-gh btn-sm" id="btn-exp-rek-pdf">🖨 PDF</button>
+    </div>
+  </div>
+
+  <div class="twrap"><div class="tscroll">
+    <div style="display:flex;gap:10px;flex-wrap:wrap;margin-bottom:14px">
+      ${[
+        {ic:'📈',t:'Forecast',d:'Perkiraan berapa unit akan terjual per minggu berdasarkan riwayat penjualan',cl:'var(--bl)'},
+        {ic:'🛒',t:'EOQ',d:'Economic Order Quantity — jumlah unit paling hemat untuk dipesan sekali pesan',cl:'var(--pr)'},
+        {ic:'📍',t:'ROP',d:'Reorder Point — jika stok sudah menyentuh angka ini, segera lakukan pemesanan',cl:'var(--yw)'},
+        {ic:'🛡️',t:'SS',d:'Safety Stock — stok cadangan minimum untuk jaga-jaga jika terjadi lonjakan permintaan',cl:'var(--pu)'},
+      ].map(x=>`<div style="flex:1;min-width:170px;padding:10px 14px;border-radius:10px;background:#fff;border:1px solid var(--bd);display:flex;gap:10px;align-items:flex-start">
+        <div style="font-size:18px;line-height:1.2">${x.ic}</div>
+        <div><div style="font-size:12px;font-weight:800;color:${x.cl}">${x.t}</div><div style="font-size:11px;color:var(--txM);margin-top:2px;line-height:1.5">${x.d}</div></div>
+      </div>`).join('')}
+    </div>
+    <table><thead><tr>
+      <th>#</th><th>SKU</th><th>Nama Barang</th>
+      <th style="text-align:center" title="Jumlah unit yang saat ini ada di gudang">Stok Gudang</th>
+      <th title="Perkiraan penjualan per minggu">Forecast/mgg</th>
+      <th style="text-align:center" title="Jumlah unit paling hemat untuk dipesan sekaligus">EOQ (pesan berapa?)</th>
+      <th style="text-align:center" title="Jika stok sudah di angka ini, segera pesan">ROP (pesan kapan?)</th>
+      <th style="text-align:center" title="Stok cadangan minimum yang harus selalu tersedia">SS (cadangan)</th>
+      <th>Status</th><th>Aksi</th>
+    </tr></thead>
+    <tbody>
+      ${data.map((d,i)=>{
+        const s=stok[d.sku]||0;
+        if(d.noData) return`<tr>
+          <td style="color:var(--txM);text-align:center">${i+1}</td>
+          <td style="font-weight:700;color:var(--prD)">${d.sku}</td>
+          <td style="max-width:190px">${esc(d.nama)}</td>
+          <td style="text-align:center;font-size:16px;font-weight:800;color:var(--txM)">${s}</td>
+          <td colspan="5" style="text-align:center;color:var(--txM);font-size:12px">Belum ada data penjualan — catat transaksi terlebih dahulu</td>
+          <td><button class="btn btn-bl btn-sm" data-sku="${d.sku}" data-action="show-rek-detail" disabled style="opacity:0.4;cursor:not-allowed">🔍 Detail</button></td>
+        </tr>`;
+        const perlu=d.rop>0&&s<=d.rop;
+        return`<tr style="background:${perlu?'rgba(230,55,87,0.05)':'transparent'}">
+          <td style="color:var(--txM);text-align:center">${i+1}</td>
+          <td style="font-weight:700;color:var(--prD)">${d.sku}</td>
+          <td style="max-width:190px">${esc(d.nama)}</td>
+          <td style="text-align:center;font-size:16px;font-weight:800;color:${perlu?'var(--rd)':'var(--gn)'}">${s}</td>
+          <td style="text-align:center">${d.fc.toFixed(4)}</td>
+          <td style="text-align:center;font-weight:700;color:var(--prD)">${d.eoq}</td>
+          <td style="text-align:center;font-weight:700;color:var(--yw)">${d.rop}</td>
+          <td style="text-align:center">${d.ss}</td>
+          <td>
+            ${perlu
+              ?`<span class="sp sp-pesan" title="Stok (${s}) sudah ≤ ROP (${d.rop}). Pesan ${d.eoq} unit sekarang.">🔴 SEGERA PESAN ${d.eoq} unit</span>`
+              :`<span class="sp sp-aman" title="Stok masih aman. Pantau terus.">✅ AMAN</span>`
+            }
+          </td>
+          <td><button class="btn btn-bl btn-sm" data-sku="${d.sku}" data-action="show-rek-detail">🔍 Detail</button></td>
+        </tr>`;
+      }).join('')}
+    </tbody></table>
+  </div></div>`;
+
+  // events
+  g('btn-toggle-rekf').addEventListener('click',()=>{APP.showRekF=!APP.showRekF;renderRekomendasi()});
+  g('sel-bulan-rek')?.addEventListener('change',()=>{APP.rekBulan=g('sel-bulan-rek').value;APP.sbaData=calcSBA(APP.rekBulan);APP.sbaTS=new Date().toLocaleString('id-ID');renderRekomendasi()});
+  g('btn-hitung-sba').addEventListener('click',()=>{
+    APP.sbaData=calcSBA(APP.rekBulan||'semua');
+    APP.sbaTS=new Date().toLocaleString('id-ID');
+    renderRekomendasi();
+  });
+  g('btn-exp-rek').addEventListener('click',()=>{
+    const rows=APP.sbaData.map(d=>[d.sku,d.nama,stok[d.sku]||0,d.noData?'—':d.fc.toFixed(4),d.noData?'—':d.eoq,d.noData?'—':d.rop,d.noData?'—':d.ss,d.noData?'Belum ada data':((stok[d.sku]||0)<=d.rop&&d.rop>0?'SEGERA PESAN':'AMAN')]);
+    exportCSV(rows,['SKU','Nama','Stok','Forecast/mgg','EOQ','ROP','Safety Stock','Status'],'rekomendasi.csv');
+  });
+  g('btn-exp-rek-xl')?.addEventListener('click',()=>{
+    const rows=APP.sbaData.map(d=>[d.sku,d.nama,stok[d.sku]||0,d.noData?'—':d.fc.toFixed(4),d.noData?'—':d.eoq,d.noData?'—':d.rop,d.noData?'—':d.ss,d.noData?'Belum ada data':((stok[d.sku]||0)<=d.rop&&d.rop>0?'SEGERA PESAN':'AMAN')]);
+    exportExcel(rows,['SKU','Nama Barang','Stok Gudang','Forecast/mgg','EOQ (Pesan Berapa?)','ROP (Pesan Kapan?)','Safety Stock','Status'],'Rekomendasi','rekomendasi.xls');
+  });
+  g('btn-exp-rek-pdf')?.addEventListener('click',()=>{
+    const rows=APP.sbaData.map(d=>[d.sku,d.nama,stok[d.sku]||0,d.noData?'—':d.fc.toFixed(4),d.noData?'—':d.eoq,d.noData?'—':d.rop,d.noData?'—':d.ss,d.noData?'Belum ada data':((stok[d.sku]||0)<=d.rop&&d.rop>0?'SEGERA PESAN':'AMAN')]);
+    exportPDFTable(rows,['SKU','Nama Barang','Stok','Forecast/mgg','EOQ','ROP','Safety Stock','Status'],'Rekomendasi Pemesanan',`Update: ${APP.sbaTS||'—'}`);
+  });
+  g('pg-rekomendasi').querySelectorAll('[data-action="show-rek-detail"]').forEach(btn=>{
+    btn.addEventListener('click',()=>{
+      const d=APP.sbaData.find(x=>x.sku===btn.dataset.sku); if(!d) return;
+      const stok=LS.obj('pm_stok'), s=stok[d.sku]||0, perlu=s<=d.rop;
+      openModal(`
+        <div class="mhdr"><div class="mtitle">🔬 Detail Perhitungan — ${esc(d.nama)}</div><button class="mclose" id="mc">✕</button></div>
+        <div style="display:flex;gap:10px;flex-wrap:wrap;margin-bottom:14px;padding:11px 14px;background:var(--prBg);border-radius:12px;border:1px solid var(--prBr);font-size:13px">
+          <div><div style="font-size:11px;color:var(--txM)">SKU</div><b style="color:var(--prD)">${d.sku}</b></div>
+          <div><div style="font-size:11px;color:var(--txM)">Harga</div><b>${fmtRp(d.harga)}</b></div>
+          <div><div style="font-size:11px;color:var(--txM)">Periode</div><b>${d.periode} minggu</b></div>
+          <div><div style="font-size:11px;color:var(--txM)">Stok saat ini</div><b style="color:${perlu?'var(--rd)':'var(--gn)'}">${s} unit</b></div>
+        </div>
+        <div class="g2">
+          <div class="fbox fbox-bl"><div class="flabel flabel-bl">📊 Hasil SBA</div><div class="fmath">ADI = ${d.adi}<br>CV = ${d.cv}<br>Z<sub>final</sub> = ${d.Z}<br>I<sub>final</sub> = ${d.I}<div class="fhi">Forecast = ${d.fc.toFixed(4)} unit/mgg</div></div></div>
+          <div class="fbox fbox-pr"><div class="flabel flabel-pr">🛒 EOQ</div><div class="fmath">D = ${d.fc.toFixed(4)}×52 = ${d.D_annual.toFixed(2)}<br>H = ${fmtRp(d.H_unit)}<br>S = Rp 55.000<div class="fhi">EOQ = √(2×${d.D_annual.toFixed(1)}×55000/${Math.round(d.H_unit).toLocaleString('id-ID')}) ≈ ${d.eoq} unit</div></div></div>
+          <div class="fbox fbox-pu"><div class="flabel flabel-pu">🛡️ Safety Stock</div><div class="fmath">σ = ${d.cv}×${d.fc.toFixed(4)} = ${d.sigma.toFixed(4)}<br>Z = 1.645<div class="fhi">SS = ⌈1.645×${d.sigma.toFixed(4)}⌉ = ${d.ss} unit</div></div></div>
+          <div class="fbox fbox-gn"><div class="flabel flabel-gn">🎯 ROP</div><div class="fmath">Demand LT = ⌈${d.fc.toFixed(4)}×1⌉ = ${d.demLT}<br>SS = ${d.ss}<div class="fhi">ROP = ${d.demLT}+${d.ss} = ${d.rop} unit</div></div></div>
+        </div>
+        <div style="margin-top:12px;padding:13px 16px;background:${perlu?'var(--rdB)':'var(--gnB)'};border:1px solid ${perlu?'var(--rdBr)':'var(--gnBr)'};border-radius:12px">
+          <div style="font-size:11px;font-weight:700;color:${perlu?'var(--rd)':'var(--gn)'};text-transform:uppercase;letter-spacing:0.8px;margin-bottom:4px">💡 Keputusan</div>
+          <div style="font-size:13px;line-height:1.6">${perlu?`Stok (${s}) ≤ ROP (${d.rop}). <b>Pesan ulang sekarang sebanyak ${d.eoq} unit.</b>`:`Stok (${s}) masih di atas ROP (${d.rop}). <b>Belum perlu pesan.</b>`}</div>
+        </div>
+      `);
+      g('mc').onclick=closeModal;
+    });
+  });
+}
+
+/* ============================================================
+   PANDUAN
+   ============================================================ */
+function renderPanduan(){
+  const steps={
+    manajer:[{i:'🏠',t:'Buka Dashboard',d:'Cek alert garansi tiap pagi. Alarm berbunyi jika ada item kritis.'},{i:'📥',t:'Catat Barang Masuk',d:'Pilih SKU, isi jumlah dan tanggal. Garansi 30 hari dihitung otomatis.'},{i:'📤',t:'Catat Penjualan',d:'Setiap transaksi dicatat di sini. Stok berkurang otomatis. Data jadi input ABC dan SBA.'},{i:'📊',t:'Klasifikasi ABC',d:'Tiap akhir bulan klik Hitung Ulang. Kelas A/B/C menyesuaikan demand terbaru.'},{i:'🎯',t:'Rekomendasi',d:'Tiap 2 minggu klik Hitung Ulang. Stok ≤ ROP artinya pesan EOQ unit.'}],
+    kasir:[{i:'🏠',t:'Pantau Dashboard',d:'Cek alert tiap pagi. Laporkan ke Manajer jika ada KRITIS atau HANGUS.'},{i:'📤',t:'Catat Penjualan',d:'Catat realtime setiap transaksi terjadi agar stok selalu akurat.'}],
+    gudang:[{i:'🏠',t:'Pantau Dashboard',d:'Cek alert tiap pagi. Item HANGUS segera retur ke supplier.'},{i:'📥',t:'Catat Barang Datang',d:'Setiap kiriman dari supplier langsung input. Garansi 30 hari dihitung otomatis.'}],
+  };
+  const data=steps[APP.user.role]||steps.manajer;
+  const faq=[{q:'Apa beda EOQ dan ROP?',a:'EOQ = berapa unit yang dipesan tiap kali. ROP = batas stok minimum sebelum perlu pesan ulang.'},{q:'Kapan Hitung Ulang?',a:'ABC = tiap bulan. Rekomendasi SBA+EOQ = tiap 2 minggu atau setelah banyak transaksi.'},{q:'Apa itu SKU Intermittent?',a:'Barang dengan permintaan jarang dan tidak teratur. Banyak minggu dengan nol penjualan. Ada 10 SKU.'},{q:'Bagaimana garansi 30 hari?',a:'Otomatis dari Tanggal Datang + 30 hari. Warna: Hijau >10, Kuning 4–10, Merah ≤3, Ungu hangus.'},{q:'Data tersimpan di mana?',a:'Local Storage browser. Backup lewat tombol CSV. Jangan hapus data browser sembarangan.'},{q:'Alarm tidak mati?',a:'Tekan tombol Matikan Alarm yang muncul di Dashboard saat ada garansi kritis.'}];
+
+  g('pg-panduan').innerHTML=`
+  <div class="card" style="padding:26px;margin-bottom:20px;background:linear-gradient(135deg,#fff8ec,#fff)">
+    <div style="display:flex;gap:20px;align-items:center;flex-wrap:wrap">
+      <div style="width:66px;height:66px;border-radius:16px;background:linear-gradient(135deg,var(--pr),var(--prL));display:flex;align-items:center;justify-content:center;font-size:30px;box-shadow:0 8px 20px rgba(255,136,0,0.26)">📖</div>
+      <div style="flex:1;min-width:200px">
+        <h2 style="font-size:19px;font-weight:800">Selamat datang, ${esc(APP.user.nama)}</h2>
+        <p style="font-size:13px;color:var(--txM);margin-top:5px;line-height:1.6">Ikuti alur kerja di bawah sesuai peran Anda sebagai <b style="color:var(--prD);text-transform:capitalize">${APP.user.role}</b>.</p>
+      </div>
+    </div>
+  </div>
+
+  <div style="font-size:11px;font-weight:700;color:var(--txM);text-transform:uppercase;letter-spacing:1px;margin-bottom:11px">Alur Kerja Harian</div>
+  <div style="display:flex;flex-direction:column;gap:10px;margin-bottom:24px">
+    ${data.map((s,i)=>`
+      <div class="card" style="padding:20px;display:flex;gap:14px;align-items:flex-start">
+        <div style="width:42px;height:42px;border-radius:11px;background:var(--prBg);border:1px solid var(--prBr);display:flex;align-items:center;justify-content:center;font-size:19px;flex-shrink:0">${s.i}</div>
+        <div>
+          <div style="display:flex;align-items:center;gap:8px;margin-bottom:3px">
+            <div style="width:19px;height:19px;border-radius:50%;background:linear-gradient(135deg,var(--pr),var(--prL));color:#fff;font-size:10px;font-weight:700;display:flex;align-items:center;justify-content:center">${i+1}</div>
+            <div style="font-size:13px;font-weight:700;font-family:'Plus Jakarta Sans',sans-serif">${s.t}</div>
+          </div>
+          <div style="font-size:12px;color:var(--txM);line-height:1.6">${s.d}</div>
+        </div>
+      </div>`).join('')}
+  </div>
+
+  <div style="font-size:11px;font-weight:700;color:var(--txM);text-transform:uppercase;letter-spacing:1px;margin-bottom:11px">Pertanyaan Umum</div>
+  <div class="g2" style="margin-bottom:22px">
+    ${faq.map(f=>`<div class="card" style="padding:16px"><div style="font-size:13px;font-weight:700;color:var(--prD);margin-bottom:4px">❓ ${f.q}</div><div style="font-size:12px;color:var(--txM);line-height:1.6">${f.a}</div></div>`).join('')}
+  </div>
+
+  <div style="padding:16px 20px;background:#fff8ec;border:1px dashed var(--prBr);border-radius:14px">
+    <div style="font-size:13px;font-weight:700;color:var(--prD);margin-bottom:7px">💡 Tips Pemakaian</div>
+    <ul style="margin:0;padding-left:18px;font-size:12px;color:var(--tx);line-height:1.9">
+      <li>Catat penjualan segera setelah transaksi terjadi agar stok akurat.</li>
+      <li>Backup data tiap minggu via tombol CSV di tiap halaman.</li>
+      <li>Klik Detail di tabel Rekomendasi untuk lihat perhitungan lengkap per SKU.</li>
+      <li>Alarm berbunyi otomatis untuk garansi kritis. Matikan lewat Dashboard.</li>
+    </ul>
+  </div>`;
+}
+
+/* ============================================================
+   MODAL HELPERS
+   ============================================================ */
+function openModal(html){
+  g('modal-root').innerHTML=`<div class="ov" id="modal-ov"><div class="mbox">${html}</div></div>`;
+  g('modal-ov').addEventListener('click',e=>{if(e.target===g('modal-ov'))closeModal()});
+}
+function closeModal(){g('modal-root').innerHTML=''}
+
+function openConfirm(pesan, onYes){
+  openModal(`
+    <div class="mhdr"><div class="mtitle">⚠️ Konfirmasi Hapus</div><button class="mclose" id="mc-x">✕</button></div>
+    <div style="text-align:center;padding:8px 0 16px">
+      <div style="font-size:36px;margin-bottom:12px">🗑️</div>
+      <div style="font-size:14px;color:var(--tx);font-weight:600;margin-bottom:6px">${pesan}</div>
+      <div style="font-size:12px;color:var(--rd)">Aksi ini tidak dapat dibatalkan.</div>
+    </div>
+    <div style="display:flex;gap:9px">
+      <button class="btn btn-rd btn-lg" style="flex:1;justify-content:center" id="mc-yes">Ya, Hapus</button>
+      <button class="btn btn-gh btn-lg" style="flex:1;justify-content:center" id="mc-no">Batal</button>
+    </div>
+  `);
+  g('mc-x').onclick=g('mc-no').onclick=closeModal;
+  g('mc-yes').onclick=()=>{closeModal();onYes()};
+}
+
+/* ============================================================
+   MSG HELPERS
+   ============================================================ */
+function showMsg(id,txt,ok){
+  const el=g(id);if(!el)return;
+  el.innerHTML=`<div class="banner ${ok?'ban-gn':'ban-rd'}" style="margin-top:12px"><span class="ban-ico">${ok?'✅':'⚠️'}</span><span>${txt}</span></div>`;
+}
+
+/* ============================================================
+   KELOLA USER & AKSES
+   ============================================================ */
+function renderKelolaUser(){
+  const users=LS.get('pm_users');
+  const logs=LS.get('pm_access_log');
+  const currentUser=APP.user;
+
+  // Format waktu singkat
+  const fmtWaktu=iso=>{
+    try{
+      const d=new Date(iso);
+      return d.toLocaleString('id-ID',{day:'2-digit',month:'short',year:'numeric',hour:'2-digit',minute:'2-digit'});
+    }catch{return iso}
+  };
+
+  // Cari last activity per user dari log
+  const lastActivity={};
+  logs.forEach(l=>{
+    if(!lastActivity[l.username]||l.waktu>lastActivity[l.username].waktu){
+      lastActivity[l.username]=l;
+    }
+  });
+
+  const roleColor={manajer:'var(--pr)',kasir:'var(--bl)',gudang:'var(--gn)'};
+  const roleBg={manajer:'var(--prBg)',kasir:'var(--blB)',gudang:'var(--gnB)'};
+  const roleBr={manajer:'var(--prBr)',kasir:'var(--blBr)',gudang:'var(--gnBr)'};
+
+  g('pg-kelola-user').innerHTML=`
+  <div class="banner ban-bl"><span class="ban-ico">ℹ️</span><span>Halaman ini hanya bisa diakses oleh <b>Manajer</b>. Anda bisa melihat semua akun yang terdaftar, melihat aktivitas terakhir, mereset akses user, atau menghapus akun yang tidak diinginkan. User yang dihapus harus mendaftar ulang dan menunggu Manajer mengaktifkan aksesnya.</span></div>
+
+  <!-- STATISTIK USER -->
+  <div style="display:flex;gap:12px;flex-wrap:wrap;margin-bottom:20px">
+    <div class="stat-card" style="flex:1;min-width:140px">
+      <div class="stat-strip" style="background:linear-gradient(90deg,var(--pr),var(--prL))"></div>
+      <div style="position:relative"><div class="stat-ico" style="background:rgba(255,136,0,0.11)">👥</div>
+      <div class="stat-lbl">Total Akun</div>
+      <div class="stat-val">${users.length}</div>
+      <div class="stat-sub">terdaftar di sistem</div></div>
+    </div>
+    <div class="stat-card" style="flex:1;min-width:140px">
+      <div class="stat-strip" style="background:linear-gradient(90deg,var(--rd),#ff6b8a)"></div>
+      <div style="position:relative"><div class="stat-ico" style="background:rgba(230,55,87,0.1)">👔</div>
+      <div class="stat-lbl">Manajer</div>
+      <div class="stat-val" style="color:var(--pr)">${users.filter(u=>u.role==='manajer').length}</div>
+      <div class="stat-sub">akun manajer</div></div>
+    </div>
+    <div class="stat-card" style="flex:1;min-width:140px">
+      <div class="stat-strip" style="background:linear-gradient(90deg,var(--bl),#60a5fa)"></div>
+      <div style="position:relative"><div class="stat-ico" style="background:rgba(59,130,246,0.1)">💼</div>
+      <div class="stat-lbl">Kasir</div>
+      <div class="stat-val" style="color:var(--bl)">${users.filter(u=>u.role==='kasir').length}</div>
+      <div class="stat-sub">akun kasir</div></div>
+    </div>
+    <div class="stat-card" style="flex:1;min-width:140px">
+      <div class="stat-strip" style="background:linear-gradient(90deg,var(--gn),#34d399)"></div>
+      <div style="position:relative"><div class="stat-ico" style="background:rgba(16,185,129,0.1)">📦</div>
+      <div class="stat-lbl">Gudang</div>
+      <div class="stat-val" style="color:var(--gn)">${users.filter(u=>u.role==='gudang').length}</div>
+      <div class="stat-sub">akun gudang</div></div>
+    </div>
+    <div class="stat-card" style="flex:1;min-width:140px">
+      <div class="stat-strip" style="background:linear-gradient(90deg,var(--pu),#a78bfa)"></div>
+      <div style="position:relative"><div class="stat-ico" style="background:rgba(139,92,246,0.1)">📋</div>
+      <div class="stat-lbl">Total Aktivitas</div>
+      <div class="stat-val" style="color:var(--pu)">${logs.length}</div>
+      <div class="stat-sub">log tercatat</div></div>
+    </div>
+  </div>
+
+  <!-- TABEL USER -->
+  <div class="toolbar">
+    <div><div class="tb-title">👥 Daftar Semua Akun Terdaftar</div><div class="tb-sub">Kelola akses dan pantau aktivitas setiap user</div></div>
+    <div class="tb-actions">
+      <button class="btn btn-gn btn-sm" id="btn-exp-users">⬇ Export CSV</button>
+    </div>
+  </div>
+  <div class="twrap" style="margin-bottom:22px"><div class="tscroll">
+    ${users.length===0?`<div class="tempty">Belum ada user terdaftar.</div>`:`
+    <table><thead><tr>
+      <th>Nama</th><th>Username</th><th>Role</th>
+      <th>Terdaftar Sejak</th><th>Aktivitas Terakhir</th>
+      <th>Jenis Aktivitas</th><th>Status</th><th>Aksi</th>
+    </tr></thead>
+    <tbody>
+      ${users.map(u=>{
+        const last=lastActivity[u.username];
+        const isMe=u.username===currentUser.username;
+        const tipeIcon={LOGIN:'🔑',LOGOUT:'🚪',INBOUND:'📥',PENJUALAN:'📤',default:'📋'};
+        return`<tr style="background:${isMe?'rgba(255,136,0,0.04)':'transparent'}">
+          <td>
+            <div style="font-weight:700;color:var(--tx)">${esc(u.nama)}</div>
+            ${isMe?`<div style="font-size:10px;color:var(--pr);font-weight:700">● Anda</div>`:''}
+          </td>
+          <td style="font-weight:600;color:var(--txM);font-family:monospace">${esc(u.username)}</td>
+          <td>
+            <span style="padding:3px 10px;border-radius:6px;font-size:11px;font-weight:700;
+              background:${roleBg[u.role]||'var(--sf)'};
+              color:${roleColor[u.role]||'var(--txM)'};
+              border:1px solid ${roleBr[u.role]||'var(--bd)'}">
+              ${u.role}
+            </span>
+          </td>
+          <td style="font-size:12px;color:var(--txM)">${u.id?fmtWaktu(new Date(u.id).toISOString()):'—'}</td>
+          <td style="font-size:12px;color:var(--txM)">${last?fmtWaktu(last.waktu):'Belum pernah'}</td>
+          <td style="font-size:12px">
+            ${last?`<span>${tipeIcon[last.tipe]||tipeIcon.default} ${last.tipe}</span>`:'—'}
+          </td>
+          <td>
+            <span class="badge" style="background:var(--gnB);color:var(--gn);border:1px solid var(--gnBr)">Aktif</span>
+          </td>
+          <td style="white-space:nowrap">
+            ${isMe?`<span style="font-size:11px;color:var(--txM)">Akun sendiri</span>`:`
+              <button class="btn btn-yw btn-sm" data-uid="${u.id}" data-action="reset-pin" style="margin-right:5px" title="Reset PIN — user harus minta PIN baru ke Manajer">🔄 Reset</button>
+              <button class="btn btn-rd btn-sm" data-uid="${u.id}" data-uname="${esc(u.username)}" data-action="del-user" title="Hapus akun — user harus daftar ulang">🗑️ Hapus</button>
+            `}
+          </td>
+        </tr>`;
+      }).join('')}
+    </tbody></table>`}
+  </div></div>
+
+  <!-- LOG AKTIVITAS -->
+  <div class="toolbar">
+    <div><div class="tb-title">📋 Riwayat Aktivitas Sistem</div><div class="tb-sub">${logs.length} aktivitas tercatat · 500 aktivitas terakhir tersimpan</div></div>
+    <div class="tb-actions">
+      <select id="sel-log-filter" class="fsel" style="width:auto;padding:5px 10px;font-size:12px">
+        <option value="semua">Semua Aktivitas</option>
+        <option value="LOGIN">Login</option>
+        <option value="LOGOUT">Logout</option>
+        <option value="INBOUND">Barang Masuk</option>
+        <option value="PENJUALAN">Penjualan</option>
+      </select>
+      <button class="btn btn-gn btn-sm" id="btn-exp-log">⬇ Export Log</button>
+      <button class="btn btn-rd btn-sm" id="btn-clear-log">🗑️ Hapus Log</button>
+    </div>
+  </div>
+  <div class="twrap"><div class="tscroll">
+    ${logs.length===0?`<div class="tempty" style="padding:32px"><div style="font-size:24px;margin-bottom:8px">📋</div>Belum ada aktivitas tercatat.</div>`:`
+    <table id="tbl-log"><thead><tr>
+      <th>Waktu</th><th>Username</th><th>Nama</th><th>Role</th><th>Tipe</th><th>Detail</th>
+    </tr></thead>
+    <tbody>
+      ${logs.slice(0,100).map(l=>{
+        const tipeColor={LOGIN:'var(--gn)',LOGOUT:'var(--txM)',INBOUND:'var(--bl)',PENJUALAN:'var(--pr)'};
+        const tipeBg={LOGIN:'var(--gnB)',LOGOUT:'var(--sf)',INBOUND:'var(--blB)',PENJUALAN:'var(--prBg)'};
+        return`<tr data-tipe="${l.tipe}">
+          <td style="font-size:11px;color:var(--txM);white-space:nowrap">${fmtWaktu(l.waktu)}</td>
+          <td style="font-weight:600;font-family:monospace;font-size:12px">${esc(l.username)}</td>
+          <td style="font-size:12px">${esc(l.nama)}</td>
+          <td><span style="font-size:10px;padding:2px 8px;border-radius:4px;font-weight:700;text-transform:capitalize;background:${roleBg[l.role]||'var(--sf)'};color:${roleColor[l.role]||'var(--txM)'}">${l.role}</span></td>
+          <td><span style="font-size:11px;font-weight:700;padding:2px 9px;border-radius:4px;background:${tipeBg[l.tipe]||'var(--sf)'};color:${tipeColor[l.tipe]||'var(--txM)'}">${l.tipe}</span></td>
+          <td style="font-size:12px;color:var(--txM)">${esc(l.detail)}</td>
+        </tr>`;
+      }).join('')}
+    </tbody></table>
+    ${logs.length>100?`<div style="padding:10px 16px;font-size:12px;color:var(--txM);background:var(--sf);text-align:center">Menampilkan 100 dari ${logs.length} aktivitas. Export CSV untuk data lengkap.</div>`:''}`}
+  </div></div>`;
+
+  // ===== EVENTS =====
+
+  // Filter log
+  g('sel-log-filter').addEventListener('change',()=>{
+    const val=g('sel-log-filter').value;
+    document.querySelectorAll('#tbl-log tbody tr').forEach(tr=>{
+      tr.style.display=(val==='semua'||tr.dataset.tipe===val)?'':'none';
+    });
+  });
+
+  // Export users CSV
+  g('btn-exp-users').addEventListener('click',()=>{
+    const rows=users.map(u=>{
+      const last=lastActivity[u.username];
+      return[u.username,u.nama,u.role,u.id?new Date(u.id).toLocaleString('id-ID'):'—',last?fmtWaktu(last.waktu):'Belum pernah',last?last.tipe:'—'];
+    });
+    exportCSV(rows,['Username','Nama','Role','Terdaftar','Aktivitas Terakhir','Jenis'],'users.csv');
+  });
+
+  // Export log CSV
+  g('btn-exp-log').addEventListener('click',()=>{
+    const rows=logs.map(l=>[fmtWaktu(l.waktu),l.username,l.nama,l.role,l.tipe,l.detail]);
+    exportCSV(rows,['Waktu','Username','Nama','Role','Tipe','Detail'],'activity_log.csv');
+  });
+
+  // Hapus log
+  g('btn-clear-log').addEventListener('click',()=>{
+    openConfirm('Hapus seluruh riwayat aktivitas? Data log akan hilang permanen.',()=>{
+      LS.set('pm_access_log',[]);
+      logActivity('SYSTEM','Manajer menghapus semua log aktivitas');
+      renderKelolaUser();
+    });
+  });
+
+  // Reset PIN user
+  g('pg-kelola-user').querySelectorAll('[data-action="reset-pin"]').forEach(btn=>{
+    btn.addEventListener('click',()=>{
+      const uid=+btn.dataset.uid;
+      const u=LS.get('pm_users').find(x=>x.id===uid);
+      if(!u) return;
+      const newPin=genPIN();
+      const updated=LS.get('pm_users').map(x=>x.id===uid?{...x,pin:newPin}:x);
+      LS.set('pm_users',updated);
+      logActivity('SYSTEM',`Manajer reset PIN user: ${u.username}`);
+      openModal(`
+        <div class="mhdr"><div class="mtitle">🔄 PIN Baru untuk ${esc(u.nama)}</div><button class="mclose" id="mc">✕</button></div>
+        <div style="text-align:center;padding:16px 0">
+          <div style="font-size:13px;color:var(--txM);margin-bottom:12px">PIN baru untuk user <b>${esc(u.username)}</b></div>
+          <div style="background:var(--prBg);border:2px solid var(--prBr);border-radius:12px;padding:20px;margin-bottom:14px">
+            <div style="font-size:11px;color:var(--txM);margin-bottom:6px;text-transform:uppercase;letter-spacing:1px">PIN Baru</div>
+            <div style="font-size:36px;font-weight:800;letter-spacing:12px;color:var(--prD);font-family:monospace">${newPin}</div>
+          </div>
+          <div class="banner ban-rd" style="text-align:left"><span class="ban-ico">⚠️</span><span>Sampaikan PIN ini langsung ke user. PIN hanya muncul sekali di sini.</span></div>
+        </div>
+        <button class="btn btn-pr btn-lg" style="width:100%;justify-content:center" id="mc2">✅ Tutup</button>
+      `);
+      g('mc').onclick=g('mc2').onclick=()=>{closeModal();renderKelolaUser()};
+    });
+  });
+
+  // Hapus user
+  g('pg-kelola-user').querySelectorAll('[data-action="del-user"]').forEach(btn=>{
+    btn.addEventListener('click',()=>{
+      const uid=+btn.dataset.uid;
+      const uname=btn.dataset.uname;
+      const u=LS.get('pm_users').find(x=>x.id===uid);
+      if(!u) return;
+      openConfirm(`Hapus akun "${esc(u.nama)}" (@${esc(u.username)})? User harus mendaftar ulang untuk mengakses sistem.`,()=>{
+        LS.set('pm_users',LS.get('pm_users').filter(x=>x.id!==uid));
+        logActivity('SYSTEM',`Manajer menghapus akun user: ${u.username} (${u.role})`);
+        // Jika user sedang login di device lain, session mereka akan invalid
+        // karena getSession() akan gagal verifikasi
+        renderKelolaUser();
+      });
+    });
+  });
+}
+
+/* ============================================================
+   MANAJEMEN SKU
+   ============================================================ */
+function renderManajemenSKU(){
+  const custom=LS.get('pm_sku_custom',[]);
+  const allSKU=getAllSKU();
+  const stok=LS.obj('pm_stok');
+
+  g('pg-manajemen-sku').innerHTML=`
+  <div class="banner ban-bl"><span class="ban-ico">ℹ️</span><span><b>Apa ini?</b> Halaman ini untuk menambah barang/SKU baru yang belum terdaftar di sistem. 50 SKU awal sudah ada. SKU baru yang Anda tambah akan otomatis muncul di form Barang Masuk, Penjualan, dan perhitungan ABC.</span></div>
+
+  <div class="card" style="padding:24px;margin-bottom:20px">
+    <div style="font-size:15px;font-weight:800;margin-bottom:3px;font-family:'Plus Jakarta Sans',sans-serif">➕ Tambah SKU Baru</div>
+    <div style="font-size:12px;color:var(--txM);margin-bottom:18px">Isi semua field — SKU ID harus unik dan belum terdaftar</div>
+    <div class="g2">
+      <div class="fwrap">
+        <label class="flbl">SKU ID <span style="color:var(--rd)">*</span></label>
+        <input id="ns-id" class="finp" placeholder="Contoh: SP-051" style="text-transform:uppercase">
+        <div class="fhint">Gunakan format SP-XXX. Akan diubah otomatis ke huruf kapital.</div>
+      </div>
+      <div class="fwrap">
+        <label class="flbl">Nama Barang <span style="color:var(--rd)">*</span></label>
+        <input id="ns-nama" class="finp" placeholder="Contoh: Kampas Rem Depan PCX 160">
+      </div>
+      <div class="fwrap">
+        <label class="flbl">Harga Beli per Unit <span style="color:var(--rd)">*</span></label>
+        <input id="ns-harga" type="number" class="finp" placeholder="Contoh: 45000" min="0">
+      </div>
+      <div class="fwrap">
+        <label class="flbl">Kategori / Jenis</label>
+        <select id="ns-kategori" class="fsel">
+          <option value="oli">Oli dan Pelumas</option>
+          <option value="rem">Kampas Rem</option>
+          <option value="busi">Busi</option>
+          <option value="filter">Filter</option>
+          <option value="ban">Ban</option>
+          <option value="aki">Aki / Baterai</option>
+          <option value="rantai">Rantai dan Gir</option>
+          <option value="kelistrikan">Kelistrikan</option>
+          <option value="body">Body dan Aksesoris</option>
+          <option value="mesin">Komponen Mesin</option>
+          <option value="lainnya" selected>Lainnya</option>
+        </select>
+      </div>
+      <div class="fwrap">
+        <label class="flbl">Apakah termasuk SKU Intermittent?</label>
+        <select id="ns-intermittent" class="fsel">
+          <option value="tidak" selected>Tidak — permintaan rutin</option>
+          <option value="ya">Ya — permintaan jarang/tidak teratur</option>
+        </select>
+        <div class="fhint">SKU Intermittent akan masuk ke perhitungan Rekomendasi SBA+EOQ.</div>
+      </div>
+      <div class="fwrap">
+        <label class="flbl">Keterangan Tambahan</label>
+        <input id="ns-ket" class="finp" placeholder="Opsional — catatan khusus tentang barang ini">
+      </div>
+    </div>
+    <div id="ns-preview"></div>
+    <div id="ns-msg"></div>
+    <button class="btn btn-pr btn-md" style="margin-top:14px" id="btn-tambah-sku">➕ Tambah SKU ke Sistem</button>
+  </div>
+
+  <!-- Tabel SKU Default (read-only) -->
+  <div class="toolbar" style="margin-top:8px">
+    <div>
+      <div class="tb-title">📦 50 SKU Bawaan Sistem</div>
+      <div class="tb-sub">Data bawaan tidak dapat diedit atau dihapus</div>
+    </div>
+    <div class="tb-actions">
+      <input id="ns-search" class="finp" placeholder="🔍 Cari nama atau ID..." style="width:200px;padding:6px 12px;font-size:12px">
+    </div>
+  </div>
+  <div class="twrap" style="margin-bottom:20px"><div class="tscroll">
+    <table id="tbl-sku-default"><thead><tr>
+      <th>SKU ID</th><th>Nama Barang</th><th>Harga Beli</th><th style="text-align:center">Stok Gudang</th><th>Status</th>
+    </tr></thead>
+    <tbody>
+      ${SKU.map(s=>`
+        <tr>
+          <td style="font-weight:700;color:var(--prD)">${s.id}</td>
+          <td>${esc(s.nama)}</td>
+          <td>${fmtRp(s.harga)}</td>
+          <td style="text-align:center;font-weight:700;color:${(stok[s.id]||0)===0?'var(--txM)':'var(--gn)'}">${stok[s.id]||0}</td>
+          <td><span class="badge" style="background:var(--gnB);color:var(--gn);border:1px solid var(--gnBr)">Aktif</span></td>
+        </tr>`).join('')}
+    </tbody></table>
+  </div></div>
+
+  <!-- Tabel SKU Custom -->
+  <div class="toolbar">
+    <div>
+      <div class="tb-title">🆕 SKU Tambahan (${custom.length} SKU)</div>
+      <div class="tb-sub">SKU yang Anda tambah sendiri</div>
+    </div>
+  </div>
+  <div class="twrap"><div class="tscroll">
+    ${custom.length===0?`<div class="tempty" style="padding:36px"><div style="font-size:28px;margin-bottom:8px">📭</div><div style="font-weight:700;margin-bottom:4px">Belum ada SKU tambahan</div><div style="font-size:12px;color:var(--txM)">Gunakan form di atas untuk menambah SKU baru.</div></div>`:`
+    <table><thead><tr>
+      <th>SKU ID</th><th>Nama Barang</th><th>Harga Beli</th><th>Kategori</th><th style="text-align:center">Stok</th><th>Intermittent</th><th>Aksi</th>
+    </tr></thead>
+    <tbody>
+      ${custom.map(s=>`
+        <tr>
+          <td style="font-weight:700;color:var(--prD)">${esc(s.id)}</td>
+          <td>${esc(s.nama)}</td>
+          <td>${fmtRp(s.harga)}</td>
+          <td style="font-size:12px;color:var(--txM);text-transform:capitalize">${s.kategori||'lainnya'}</td>
+          <td style="text-align:center;font-weight:700;color:${(stok[s.id]||0)===0?'var(--txM)':'var(--gn)'}">${stok[s.id]||0}</td>
+          <td>${s.intermittent==='ya'?`<span class="badge" style="background:var(--ywB);color:var(--yw);border:1px solid var(--ywBr)">Ya</span>`:`<span class="badge" style="background:var(--blB);color:var(--bl);border:1px solid var(--blBr)">Tidak</span>`}</td>
+          <td style="white-space:nowrap">
+            <button class="btn btn-rd btn-sm" data-id="${esc(s.id)}" data-action="del-sku-custom">🗑️ Hapus</button>
+          </td>
+        </tr>`).join('')}
+    </tbody></table>`}
+  </div></div>`;
+
+  // === EVENTS ===
+  // Auto-uppercase ID
+  g('ns-id').addEventListener('input',()=>{g('ns-id').value=g('ns-id').value.toUpperCase()});
+
+  // Live preview
+  ['ns-id','ns-nama','ns-harga'].forEach(id=>g(id)?.addEventListener('input',updateNSPreview));
+
+  // Search filter tabel default
+  g('ns-search').addEventListener('input',()=>{
+    const q=g('ns-search').value.toLowerCase();
+    document.querySelectorAll('#tbl-sku-default tbody tr').forEach(tr=>{
+      tr.style.display=tr.textContent.toLowerCase().includes(q)?'':'none';
+    });
+  });
+
+  // Tambah SKU
+  g('btn-tambah-sku').addEventListener('click',()=>{
+    const id=(g('ns-id').value||'').trim().toUpperCase();
+    const nama=(g('ns-nama').value||'').trim();
+    const harga=+(g('ns-harga').value||0);
+    const kategori=g('ns-kategori').value;
+    const intermittent=g('ns-intermittent').value;
+    const ket=(g('ns-ket').value||'').trim();
+
+    if(!id||!nama){showMsg('ns-msg','SKU ID dan Nama Barang wajib diisi.',false);return}
+    if(harga<=0){showMsg('ns-msg','Harga beli harus lebih dari 0.',false);return}
+    if(!/^[A-Z]{2}-\d+$/.test(id)){showMsg('ns-msg','Format SKU ID tidak valid. Gunakan format XX-NNN contoh SP-051.',false);return}
+
+    const existing=getAllSKU().find(s=>s.id===id);
+    if(existing){showMsg('ns-msg',`SKU ID ${id} sudah terdaftar: ${existing.nama}`,false);return}
+
+    const newSKU={id,nama,harga,kategori,intermittent,keterangan:ket,demand:[],tambahPada:new Date().toISOString().slice(0,10)};
+    const custom=LS.get('pm_sku_custom',[]);
+    LS.set('pm_sku_custom',[...custom,newSKU]);
+
+    // Inisialisasi stok ke 0
+    const stok=LS.obj('pm_stok');stok[id]=0;LS.set('pm_stok',stok);
+
+    // Jika intermittent, tambah ke INTERMITTENT array runtime
+    if(intermittent==='ya'&&!INTERMITTENT.includes(id)) INTERMITTENT.push(id);
+
+    // Invalidate cache
+    APP.abcData=null;APP.sbaData=null;
+
+    showMsg('ns-msg',`✅ SKU ${id} — ${nama} berhasil ditambahkan ke sistem!`,true);
+    g('ns-id').value='';g('ns-nama').value='';g('ns-harga').value='';g('ns-ket').value='';
+    setTimeout(()=>renderManajemenSKU(),800);
+  });
+
+  // Hapus SKU custom
+  g('pg-manajemen-sku').querySelectorAll('[data-action="del-sku-custom"]').forEach(btn=>{
+    btn.addEventListener('click',()=>{
+      const tid=btn.dataset.id;
+      const skuNama=getAllSKU().find(s=>s.id===tid)?.nama||tid;
+      openConfirm(`Hapus SKU ${tid} — ${skuNama}? Stok dan riwayat transaksinya tetap tersimpan.`,()=>{
+        LS.set('pm_sku_custom',LS.get('pm_sku_custom',[]).filter(s=>s.id!==tid));
+        const idx=INTERMITTENT.indexOf(tid);if(idx>-1) INTERMITTENT.splice(idx,1);
+        APP.abcData=null;APP.sbaData=null;
+        renderManajemenSKU();
+      });
+    });
+  });
+}
+
+function updateNSPreview(){
+  const id=(g('ns-id')?.value||'').toUpperCase();
+  const nama=g('ns-nama')?.value||'';
+  const harga=+(g('ns-harga')?.value||0);
+  if(!id&&!nama){if(g('ns-preview'))g('ns-preview').innerHTML='';return}
+  const hj=Math.round(harga*1.25);
+  g('ns-preview').innerHTML=`<div style="margin-top:10px;padding:12px 16px;background:var(--prBg);border:1px solid var(--prBr);border-radius:12px;font-size:12px">
+    <div style="font-weight:700;color:var(--prD);margin-bottom:8px">Preview: ${id||'ID belum diisi'} · ${nama||'Nama belum diisi'}</div>
+    <div style="display:flex;gap:12px;flex-wrap:wrap">
+      <div style="padding:7px 12px;background:#fff;border-radius:8px;border:1px solid var(--bd)"><div style="color:var(--txM);margin-bottom:2px">Harga Beli</div><div style="font-weight:700;color:var(--rd)">${fmtRp(harga)}</div></div>
+      <div style="padding:7px 12px;background:#fff;border-radius:8px;border:1px solid var(--bd)"><div style="color:var(--txM);margin-bottom:2px">Harga Jual default (+25%)</div><div style="font-weight:700;color:var(--bl)">${fmtRp(hj)}</div></div>
+      <div style="padding:7px 12px;background:var(--gnB);border-radius:8px;border:1px solid var(--gnBr)"><div style="color:var(--txM);margin-bottom:2px">Keuntungan/unit</div><div style="font-weight:700;color:var(--gn)">+${fmtRp(hj-harga)}</div></div>
+    </div>
+  </div>`;
+}
+
+/* ============================================================
+   BOOT
+   ============================================================ */
+(function(){
+  // Coba restore session dari localStorage
+  const savedUser = getSession();
+  if(savedUser){
+    // Session valid — masuk langsung tanpa login
+    enterApp(savedUser, true);
+  } else {
+    // Tidak ada session — tampilkan halaman login
+    g('pg-login').style.display='block';
+  }
+})();
+
+// Enter on login inputs
+document.addEventListener('keydown', e=>{
+  if(e.key==='Enter'){
+    if(g('lf-masuk')?.style.display!=='none') doLogin();
+    if(g('lf-pin')?.style.display!=='none') doPin();
+  }
+});
+</script>
+</body>
+</html>
